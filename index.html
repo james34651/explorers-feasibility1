@@ -1,0 +1,3338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Explorers Early Learning — Site Feasibility</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── VARIABLES ── */
+:root {
+  --green:#3A6B4A; --green-dk:#274D34; --green-lt:#E4EFE8;
+  --terra:#C8543A; --terra-dk:#7A2818; --terra-lt:#F5E8E4;
+  --sand:#D4A85C; --cream:#FAF7F2; --charcoal:#2C2A27;
+  --muted:#7A7168; --border:#E0D8CE; --white:#FFFFFF;
+  --amber:#C4842A; --red:#B83A2A; --blue:#185FA5;
+  --page-bg:#F0EDE8; --navy:#2C2A27;
+}
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--page-bg);color:var(--charcoal);min-height:100vh;}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--green-dk);display:flex;align-items:center;gap:16px;padding:0 24px;height:52px;border-bottom:2px solid var(--terra);}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-mark{width:28px;height:28px;background:var(--terra);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:white;font-weight:700;}
+.nav-title{color:white;font-size:14px;font-weight:600;}
+.nav-sub{color:#C8E6D4;font-size:11px;font-weight:300;}
+.nav-spacer{flex:1;}
+.nav-status{font-size:11px;color:#C8E6D4;font-style:italic;}
+.nav-btn{padding:6px 14px;border:none;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.nav-btn-save{background:var(--green);color:white;}
+.nav-btn-load{background:transparent;color:#C8E6D4;border:1px solid rgba(255,255,255,0.2);}
+
+/* ── LAYOUT ── */
+.app{padding:72px 0 40px;}
+.container{max-width:860px;margin:0 auto;padding:0 24px;}
+.page-hdr{padding:28px 0 20px;}
+.page-hdr h1{font-size:26px;font-weight:600;color:var(--green-dk);letter-spacing:-0.02em;}
+.page-hdr p{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.6;}
+
+/* ── CARDS ── */
+.section{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.sec-hdr{background:var(--green-dk);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;}
+.sec-hdr-title{color:white;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.sec-hdr-sub{color:#C8E6D4;font-size:10px;font-weight:300;}
+.sec-body{padding:18px;}
+
+/* ── FORM ── */
+.field{margin-bottom:14px;}.field:last-child{margin-bottom:0;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+label{display:block;font-size:12px;font-weight:500;color:var(--charcoal);margin-bottom:4px;}
+.hint{font-size:10.5px;color:var(--muted);margin-top:3px;line-height:1.4;}
+input[type=text],input[type=number],input[type=password],select,textarea{
+  width:100%;padding:8px 11px;font-size:13px;font-family:'DM Sans',sans-serif;
+  border:1px solid var(--border);border-radius:7px;background:#FDFCFB;color:var(--charcoal);
+  transition:border-color 0.15s,box-shadow 0.15s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(58,107,74,0.1);}
+textarea{resize:vertical;}
+
+/* ── UPLOAD ── */
+.ugrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ubox{border:1.5px dashed var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;position:relative;transition:all 0.15s;background:#FDFCFB;}
+.ubox:hover{border-color:var(--green);background:var(--green-lt);}
+.ubox.has{border-color:var(--green);border-style:solid;background:var(--green-lt);}
+.ubox input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.ubox-icon{font-size:18px;margin-bottom:3px;}
+.ubox-lbl{font-size:12px;font-weight:500;}
+.ubox-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.ubox-name{font-size:10.5px;color:var(--green-dk);font-weight:500;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── STATUS ── */
+.sbar{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:7px;font-size:11px;margin-top:8px;border:1px solid var(--border);background:#FDFCFB;}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sdot.idle{background:var(--border);}
+.sdot.ok{background:var(--green);}
+.sdot.warn{background:var(--amber);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── ESTATE ── */
+.e-add{display:flex;gap:8px;margin-bottom:8px;}
+.e-add select{flex:1;}
+.btn-add{padding:7px 14px;background:var(--green);color:white;border:none;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.btn-add:hover{background:var(--green-dk);}
+.e-hdr{display:grid;grid-template-columns:1fr 105px 88px 30px;gap:8px;padding:3px 8px;margin-bottom:3px;}
+.e-hdr span{font-size:10px;font-weight:500;color:var(--muted);text-align:center;}
+.e-hdr span:first-child{text-align:left;}
+.e-row{display:grid;grid-template-columns:1fr 105px 88px 30px;gap:8px;align-items:center;padding:7px 8px;background:#FAFAF8;border-radius:7px;margin-bottom:4px;border:1px solid var(--border);}
+.e-name{font-size:12px;font-weight:500;}
+.e-suburb{font-size:10px;color:var(--muted);}
+.e-rate{font-size:11px;color:var(--muted);text-align:center;}
+.pct-wrap{display:flex;align-items:center;gap:3px;}
+.pct-inp{width:52px!important;padding:4px 6px!important;font-size:12px!important;text-align:center;}
+.btn-del{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.btn-del:hover{background:#FDE8E8;border-color:var(--red);color:var(--red);}
+.pipe-sum{background:var(--green-lt);border:1px solid var(--green);border-radius:9px;padding:11px 14px;margin-top:10px;display:none;}
+.pipe-sum-title{font-size:10px;font-weight:600;color:var(--green-dk);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;}
+.pipe-sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.psc{background:white;border-radius:7px;padding:8px;text-align:center;border:1px solid #C8E6D4;}
+.psc-val{font-size:18px;font-weight:600;color:var(--green-dk);}
+.psc-lbl{font-size:9px;color:var(--green);margin-top:2px;line-height:1.3;}
+
+/* ── PERMIT ── */
+.permit-card{border:1px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:10px;}
+.permit-hdr{background:#FAFAF8;padding:7px 13px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+.permit-lbl{font-size:11px;font-weight:500;color:var(--muted);}
+.permit-addr-lbl{font-size:11px;color:var(--charcoal);}
+.btn-rm{padding:3px 9px;background:transparent;border:1px solid var(--border);border-radius:5px;font-size:10px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-rm:hover{background:#FDE8E8;border-color:var(--red);color:var(--red);}
+.permit-body{padding:13px;display:grid;grid-template-columns:118px 1fr;gap:12px;}
+.pimg{border:1.5px dashed var(--border);border-radius:7px;height:82px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;font-size:10px;color:var(--muted);text-align:center;gap:3px;overflow:hidden;}
+.pimg:hover{border-color:var(--green);background:var(--green-lt);}
+.pimg.has{border-style:solid;border-color:var(--green);}
+.pimg input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.pimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.eff-pill{background:var(--green-lt);border:1px solid var(--green);border-radius:6px;padding:5px 7px;text-align:center;font-size:11px;font-weight:500;color:var(--green-dk);margin-top:7px;}
+.pfields{display:flex;flex-direction:column;gap:7px;}
+.plbl{font-size:10px;font-weight:500;color:var(--charcoal);margin-bottom:2px;display:block;}
+
+/* ── STATUS TOGGLE ── */
+.rs-bar{background:var(--cream);border:1px solid var(--border);border-radius:9px;padding:13px 17px;display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.rs-lbl{font-size:12px;font-weight:500;}
+.rs-opts{display:flex;gap:10px;}
+.rs-opt{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12px;}
+.rs-opt input{accent-color:var(--green);}
+.rs-note{font-size:10.5px;color:var(--muted);margin-left:auto;font-style:italic;}
+
+/* ── API KEY ── */
+.api-box{background:#FFFBF5;border:1px solid #F0D8A8;border-radius:9px;padding:13px 17px;margin-bottom:14px;}
+.api-title{font-size:11px;font-weight:600;color:var(--amber);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:7px;}
+.api-note{font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.5;}
+
+/* ── GENERATE BUTTONS ── */
+.gen-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.btn-gen{width:100%;padding:13px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-gen-draft{background:var(--cream);color:var(--charcoal);border:1.5px solid var(--border);}
+.btn-gen-draft:hover{border-color:var(--green);background:var(--green-lt);}
+.btn-gen-final{background:var(--terra);color:white;}
+.btn-gen-final:hover{background:var(--terra-dk);}
+
+/* ── PROGRESS ── */
+.prog-area{display:none;background:white;border:1px solid var(--border);border-radius:9px;padding:18px;margin-bottom:14px;}
+.prog-title{font-size:13px;font-weight:500;margin-bottom:10px;}
+.prog-bar-wrap{background:#F0EDE8;border-radius:4px;height:5px;margin-bottom:12px;overflow:hidden;}
+.prog-bar{height:100%;background:var(--green);border-radius:4px;width:0%;transition:width 0.5s ease;}
+.prog-step{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:11px;color:var(--muted);}
+.sdot2{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;}
+.sdot2.act{background:var(--terra);animation:pulse 1s infinite;}
+.sdot2.done{background:var(--green);}
+
+/* ── SHARE ── */
+.share-sec{display:none;background:var(--green-lt);border:1px solid var(--green);border-radius:9px;padding:13px 17px;margin-bottom:14px;}
+.share-title{font-size:11px;font-weight:600;color:var(--green-dk);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:7px;}
+.share-row{display:flex;gap:8px;}
+.share-url{flex:1;font-family:'DM Mono',monospace;font-size:11px;padding:7px 9px;background:white;border:1px solid var(--border);border-radius:6px;}
+.btn-copy{padding:7px 13px;background:var(--green);color:white;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+/* ── REPORT NAV ── */
+.report-area{display:none;margin-top:18px;}
+.report-nav{background:var(--green-dk);border-radius:9px 9px 0 0;padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.report-nav-title{color:#C8E6D4;font-size:12px;flex:1;}
+.rbtn{padding:6px 13px;border:none;border-radius:5px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.rbtn-pdf{background:var(--terra);color:white;}
+.rbtn-html{background:var(--green);color:white;}
+.rbtn-pptx{background:rgba(255,255,255,0.15);color:white;}
+.report-msg{font-size:10px;color:#C8E6D4;font-style:italic;}
+
+/* ── SLIDE VIEWER ── */
+.slide-viewer{background:#2C2A27;border:1px solid var(--border);border-top:none;border-radius:0 0 9px 9px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+.slide-wrap{position:relative;width:1024px;height:576px;transform-origin:top left;}
+
+/* ══════════════════════════════════════════
+   SLIDE STYLES — all 1280×720 at 0.8 scale
+   displayed at 1024×576
+══════════════════════════════════════════ */
+.slide{position:relative;width:1280px;height:720px;overflow:hidden;font-family:'DM Sans',sans-serif;transform:scale(0.8);transform-origin:top left;background:var(--cream);}
+@media print{
+  @page{size:1280px 720px;margin:0;}
+  .nav,.report-nav,.api-box,.gen-row,.prog-area,.share-sec,.app>*:not(.report-area){display:none!important;}
+  .report-area{display:block!important;margin:0!important;}
+  .slide-viewer{background:white!important;padding:0!important;gap:0!important;}
+  .slide-wrap{width:1280px!important;height:720px!important;}
+  .slide{transform:none!important;page-break-after:always;page-break-inside:avoid;}
+  .slide:last-child{page-break-after:auto;}
+  .rbtn,.report-nav{display:none!important;}
+}
+
+
+/* ── MYSTERY SHOPPER ── */
+.ms-section{background:white;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.05);display:none;}
+.ms-hdr{background:#1a3a6b;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;}
+.ms-hdr-title{color:white;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+.ms-hdr-sub{color:#C8D8F4;font-size:10px;}
+.ms-body{padding:18px;}
+.ms-children{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+.ms-child{background:#F0F4FF;border:1px solid #C8D4F0;border-radius:9px;padding:14px;}
+.ms-child-title{font-size:11px;font-weight:600;color:#1a3a6b;margin-bottom:8px;letter-spacing:0.05em;text-transform:uppercase;}
+.ms-child-name{font-size:20px;font-weight:600;color:#1a3a6b;}
+.ms-child-detail{font-size:11px;color:var(--muted);margin-top:3px;}
+.ms-child-dob{font-size:11px;color:var(--charcoal);font-family:'DM Mono',monospace;margin-top:4px;}
+.ms-regen{padding:5px 12px;background:transparent;border:1px solid #C8D4F0;border-radius:5px;font-size:10px;color:#1a3a6b;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;}
+.ms-regen:hover{background:#E0E8FF;}
+.ms-call-select{display:flex;gap:10px;align-items:center;margin-bottom:16px;}
+.ms-call-select select{flex:1;}
+.ms-call-btn{padding:8px 16px;background:#1a3a6b;color:white;border:none;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.ms-call-btn:hover{background:#0f2548;}
+.ms-calls-list{display:flex;flex-direction:column;gap:12px;}
+.ms-call-card{border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+.ms-call-hdr{background:#F5F5F2;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.ms-call-name{font-size:12px;font-weight:600;color:var(--charcoal);}
+.ms-call-status{font-size:10px;padding:2px 8px;border-radius:3px;font-weight:600;}
+.ms-call-status.pending{background:#FFF8E1;color:var(--amber);border:1px solid var(--amber);}
+.ms-call-status.complete{background:var(--green-lt);color:var(--green-dk);border:1px solid var(--green);}
+.ms-call-body{padding:14px;}
+.ms-call-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.ms-q-group{background:#FAFAF8;border-radius:7px;padding:10px 12px;border:1px solid var(--border);}
+.ms-q-group-title{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;}
+.ms-q{margin-bottom:8px;}
+.ms-q:last-child{margin-bottom:0;}
+.ms-q label{font-size:11px;font-weight:500;color:var(--charcoal);display:block;margin-bottom:3px;}
+.ms-q input,.ms-q select,.ms-q textarea{width:100%;padding:6px 9px;font-size:12px;font-family:'DM Sans',sans-serif;border:1px solid var(--border);border-radius:6px;background:white;color:var(--charcoal);}
+.ms-q input:focus,.ms-q select:focus,.ms-q textarea:focus{outline:none;border-color:#1a3a6b;box-shadow:0 0 0 2px rgba(26,58,107,0.1);}
+.ms-days{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;}
+.ms-day{padding:4px 8px;border:1px solid var(--border);border-radius:4px;font-size:10px;font-weight:500;cursor:pointer;background:white;color:var(--muted);user-select:none;}
+.ms-day.sel{background:#1a3a6b;border-color:#1a3a6b;color:white;}
+.ms-update-btn{padding:7px 16px;background:var(--green);color:white;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.ms-update-btn:hover{background:var(--green-dk);}
+.ms-tracker{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.ms-tracker-pill{padding:4px 12px;border-radius:20px;font-size:10px;font-weight:500;border:1px solid var(--border);}
+.ms-tracker-pill.done{background:var(--green-lt);color:var(--green-dk);border-color:var(--green);}
+.ms-tracker-pill.pending{background:#FAFAF8;color:var(--muted);}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:16px;color:var(--muted);font-size:11px;font-style:italic;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-mark">E</div>
+    <div><div class="nav-title">Explorers Early Learning</div><div class="nav-sub">Site Feasibility Platform</div></div>
+  </div>
+  <div class="nav-spacer"></div>
+  <span class="nav-status" id="nav_status"></span>
+  <button class="nav-btn nav-btn-load" onclick="loadFromURL()">Load saved</button>
+  <button class="nav-btn nav-btn-save" onclick="saveToURL()">Save & share</button>
+  <button class="nav-btn" style="background:#C4842A;color:white;" onclick="exportSiteData()">Export site</button>
+  <button class="nav-btn" style="background:transparent;color:#C8E6D4;border:1px solid rgba(255,255,255,0.2);" onclick="document.getElementById('import_file').click()">Import site</button>
+  <input type="file" id="import_file" accept=".json" style="display:none" onchange="importSiteData(this)">
+  <button class="nav-btn" style="background:#555;color:white;font-size:10px;" onclick="loadTestData()">Test data</button>
+</nav>
+
+<div class="app"><div class="container">
+
+<div class="page-hdr">
+  <h1>New Site Analysis</h1>
+  <p>Complete Section 1 and upload files. Claude extracts all data — code builds the report. Save progress at any time.</p>
+</div>
+
+<!-- API KEY -->
+<div class="api-box">
+  <div class="api-title">Claude API Key</div>
+  <input type="password" id="api_key" placeholder="sk-ant-api03-..." autocomplete="off" oninput="saveApiKey(this.value)" onchange="saveApiKey(this.value)">
+  <div class="api-note">Saved in this browser automatically — you only need to enter it once. Never sent anywhere except directly to the Claude API.</div>
+</div>
+
+<!-- SECTION 1 -->
+<div class="section">
+  <div class="sec-hdr"><span class="sec-hdr-title">Section 1 — Site Details</span><span class="sec-hdr-sub">Required</span></div>
+  <div class="sec-body">
+    <div class="field">
+      <label>Full address</label>
+      <input type="text" id="address" placeholder="e.g. 1226 Edgars Rd, Wollert VIC 3750" oninput="onAddrChange()">
+    </div>
+    <div class="fg2">
+      <div class="field">
+        <label>Site type</label>
+        <select id="site_type" onchange="onSiteTypeChange()">
+          <option value="">Select...</option>
+          <option value="established">Established suburb</option>
+          <option value="greenfield">Greenfield / growth corridor</option>
+        </select>
+        <div class="sbar" id="lga_bar" style="display:none;"><div class="sdot idle" id="lga_dot"></div><span id="lga_txt">—</span></div>
+      </div>
+      <div class="field">
+        <label>Proposed centre places</label>
+        <input type="number" id="proposed_places" placeholder="e.g. 104">
+      </div>
+    </div>
+    <div class="field">
+      <label>GapMaps catchment reports</label>
+      <div class="ugrid" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+        <div class="ubox" id="box_5" onclick="document.getElementById('f5').click()">
+          <input type="file" id="f5" accept=".pdf" onchange="handleFile('f5','box_5','n5')" onclick="event.stopPropagation()">
+          <div class="ubox-icon">📄</div><div class="ubox-lbl">5-min PDF</div>
+          <div class="ubox-sub">From GapMaps</div><div class="ubox-name" id="n5"></div>
+        </div>
+        <div class="ubox" id="box_csv5" style="border-color:#1a3a6b;" onclick="document.getElementById('fcsv5').click()">
+          <input type="file" id="fcsv5" accept=".csv" onchange="handleCSV('fcsv5','box_csv5','ncsv5','5min')" onclick="event.stopPropagation()">
+          <div class="ubox-icon">📊</div><div class="ubox-lbl" style="color:#1a3a6b;">5-min CSV</div>
+          <div class="ubox-sub">From GapMaps</div><div class="ubox-name" id="ncsv5"></div>
+        </div>
+        <div class="ubox" id="box_10" onclick="document.getElementById('f10').click()">
+          <input type="file" id="f10" accept=".pdf" onchange="handleFile('f10','box_10','n10')" onclick="event.stopPropagation()">
+          <div class="ubox-icon">📄</div><div class="ubox-lbl">10-min PDF</div>
+          <div class="ubox-sub">From GapMaps</div><div class="ubox-name" id="n10"></div>
+        </div>
+        <div class="ubox" id="box_csv10" style="border-color:#1a3a6b;" onclick="document.getElementById('fcsv10').click()">
+          <input type="file" id="fcsv10" accept=".csv" onchange="handleCSV('fcsv10','box_csv10','ncsv10','10min')" onclick="event.stopPropagation()">
+          <div class="ubox-icon">📊</div><div class="ubox-lbl" style="color:#1a3a6b;">10-min CSV</div>
+          <div class="ubox-sub">From GapMaps</div><div class="ubox-name" id="ncsv10"></div>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Nearmaps aerial image</label>
+      <div class="ubox" id="box_aerial" onclick="document.getElementById('faer').click()">
+        <input type="file" id="faer" accept=".jpg,.jpeg,.png" onchange="handleFile('faer','box_aerial','naer')" onclick="event.stopPropagation()">
+        <div class="ubox-icon">🛰</div><div class="ubox-lbl">Screenshot from Nearmaps — JPG or PNG</div>
+        <div class="ubox-name" id="naer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: ESTATES -->
+<div class="section" id="estate_sec" style="display:none;">
+  <div class="sec-hdr"><span class="sec-hdr-title">Section 2 — Greenfield Estate Selection</span><span class="sec-hdr-sub" id="lga_badge">—</span></div>
+  <div class="sec-body">
+    <p class="hint" style="margin-bottom:10px;">Select estates within the 5-min drive time boundary. Use GapMaps catchment map as guide. Adjust % for partial overlaps.</p>
+    <div class="e-add">
+      <select id="estate_sel"><option value="">Select estate...</option></select>
+      <button class="btn-add" onclick="addEstate()">Add estate</button>
+    </div>
+    <div class="e-hdr"><span>Estate / Suburb</span><span>Lots/mo (Oct-24)</span><span>% in catchment</span><span></span></div>
+    <div id="estate_list"><div class="empty">No estates added yet</div></div>
+    <div class="pipe-sum" id="estate_sum">
+      <div class="pipe-sum-title">Housing Pipeline — 5-Min Catchment</div>
+      <div class="pipe-sum-grid">
+        <div class="psc"><div class="psc-val" id="s_rate">—</div><div class="psc-lbl">Effective lots/month</div></div>
+        <div class="psc"><div class="psc-val" id="s_lots">—</div><div class="psc-lbl">New lots × 54 months</div></div>
+        <div class="psc"><div class="psc-val" id="s_ch">—</div><div class="psc-lbl">New 0-5 children (×0.42)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: PERMITS -->
+<div class="section">
+  <div class="sec-hdr"><span class="sec-hdr-title">Section 3 — Pipeline Permits</span><span class="sec-hdr-sub">GapMaps proposed — exclude open centres</span></div>
+  <div class="sec-body">
+    <div id="permit_list"><div class="empty">No permits added</div></div>
+    <button class="btn-add" style="width:100%;background:transparent;color:var(--green);border:1.5px dashed var(--green);margin-top:4px;" onclick="addPermit()">+ Add pipeline permit</button>
+  </div>
+</div>
+
+<!-- SECTION 4: COMP PHOTOS -->
+<div class="section">
+  <div class="sec-hdr"><span class="sec-hdr-title">Section 4 — Competitor Photos</span><span class="sec-hdr-sub">Optional</span></div>
+  <div class="sec-body">
+    <div id="comp_list"><div class="empty">No competitor photos added</div></div>
+    <button class="btn-add" style="width:100%;background:transparent;color:var(--green);border:1.5px dashed var(--green);margin-top:4px;" onclick="addCompPhoto()">+ Add competitor photo</button>
+  </div>
+</div>
+
+<!-- DRAFT/FINAL -->
+<div class="rs-bar">
+  <span class="rs-lbl">Report status:</span>
+  <div class="rs-opts">
+    <label class="rs-opt"><input type="radio" name="rs" value="draft" checked> <span>Draft</span></label>
+    <label class="rs-opt"><input type="radio" name="rs" value="final"> <span>Final</span></label>
+  </div>
+  <span class="rs-note" id="rs_note">Draft adds watermark and TBC badges</span>
+</div>
+
+<!-- SHARE -->
+<div class="share-sec" id="share_sec">
+  <div class="share-title">Saved — Share this link</div>
+  <div class="share-row">
+    <input class="share-url" type="text" id="share_url" readonly>
+    <button class="btn-copy" onclick="copyLink()">Copy</button>
+  </div>
+  <div style="font-size:10px;color:var(--green);margin-top:5px;">File uploads need to be re-attached when reopening the link.</div>
+</div>
+
+<!-- GENERATE -->
+<div class="gen-row">
+  <button class="btn-gen btn-gen-draft" onclick="generate('draft')">Generate Draft</button>
+  <button class="btn-gen btn-gen-final" onclick="generate('final')">Generate Final Report</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-area" id="prog_area">
+  <div class="prog-title" id="prog_title">Generating report...</div>
+  <div class="prog-bar-wrap"><div class="prog-bar" id="prog_bar"></div></div>
+  <div id="prog_steps"></div>
+</div>
+
+<!-- REPORT -->
+<div class="report-area" id="report_area">
+  <div class="report-nav">
+    <span class="report-nav-title" id="report_title">Report ready</span>
+    <span class="report-msg" id="report_msg"></span>
+    <button class="rbtn rbtn-pdf" onclick="window.print()">Save as PDF</button>
+    <button class="rbtn rbtn-html" onclick="downloadHTML()">Download HTML</button>
+    <button class="rbtn rbtn-pptx" onclick="notifyPPTX()">Save as PPTX</button>
+  </div>
+  <div class="slide-viewer" id="slide_viewer"></div>
+</div>
+
+
+<!-- MYSTERY SHOPPER SECTION -->
+<div class="ms-section" id="ms_section">
+  <div class="ms-hdr">
+    <span class="ms-hdr-title">Mystery Shopper — Competitor Calls</span>
+    <span class="ms-hdr-sub" id="ms_progress_lbl">0 of 0 centres called</span>
+  </div>
+  <div class="ms-body">
+
+    <!-- Children -->
+    <div class="ms-children" id="ms_children">
+      <div class="ms-child" id="ms_child1">
+        <div class="ms-child-title">Child 1 — Infant (6-12 months)</div>
+        <div class="ms-child-name" id="ms_name1">—</div>
+        <div class="ms-child-detail" id="ms_age1">—</div>
+        <div class="ms-child-dob" id="ms_dob1">—</div>
+      </div>
+      <div class="ms-child" id="ms_child2">
+        <div class="ms-child-title">Child 2 — Kinder age (3-4 years)</div>
+        <div class="ms-child-name" id="ms_name2">—</div>
+        <div class="ms-child-detail" id="ms_age2">—</div>
+        <div class="ms-child-dob" id="ms_dob2">—</div>
+      </div>
+    </div>
+    <button class="ms-regen" onclick="generateChildren()">Regenerate child details</button>
+
+    <div style="height:14px;"></div>
+
+    <!-- Status tracker -->
+    <div style="font-size:10px;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:8px;">CALL STATUS</div>
+    <div class="ms-tracker" id="ms_tracker"></div>
+
+    <!-- Add call -->
+    <div class="ms-call-select">
+      <select id="ms_centre_sel"><option value="">Select centre to add call...</option></select>
+      <button class="ms-call-btn" onclick="addMSCall()">+ Add call</button>
+    </div>
+
+    <!-- Calls list -->
+    <div class="ms-calls-list" id="ms_calls_list">
+      <div class="empty">No calls added yet — select a centre above and click Add call</div>
+    </div>
+
+  </div>
+</div>
+
+</div></div><!-- /container /app -->
+
+<script>
+// ══════════════════════════════════════════════════════
+// ESTATE DATA
+// ══════════════════════════════════════════════════════
+const ESTATES={
+  Whittlesea:[
+    {name:'Aurora',suburb:'Wollert',rate:10.6},{name:'Lyndarum North',suburb:'Wollert',rate:7.8},
+    {name:'Arramont',suburb:'Wollert',rate:10.1},{name:'Rathdowne',suburb:'Wollert',rate:6.9},
+    {name:'Ellery',suburb:'Wollert',rate:3.4},{name:'Mason Quarter',suburb:'Wollert',rate:8.3},
+    {name:'Elyssia',suburb:'Wollert',rate:3.7},{name:'Wollert Rise',suburb:'Wollert',rate:6.1},
+    {name:'Riverhills',suburb:'Wollert',rate:2.8},{name:'The Patch',suburb:'Wollert',rate:2.9},
+    {name:'Stonefields',suburb:'Wollert',rate:5.1},{name:'Kinbrook',suburb:'Donnybrook',rate:5.0},
+    {name:'Olivine',suburb:'Donnybrook',rate:9.5},{name:'Katalia',suburb:'Donnybrook',rate:7.3},
+    {name:'Peppercorn Hill',suburb:'Donnybrook',rate:17.8},{name:'Balmain',suburb:'Donnybrook',rate:2.4},
+    {name:'Heartford',suburb:'Donnybrook',rate:2.4},{name:'Matilda',suburb:'Donnybrook',rate:6.1},
+    {name:'Atticus',suburb:'Woodstock',rate:3.7},{name:'Katandra Rise',suburb:'Doreen',rate:6.2},
+    {name:'Aspect',suburb:'Mernda',rate:2.6},{name:'Elana Place',suburb:'Epping',rate:1.8},
+  ],
+  Casey:[
+    {name:'Berwick Waters',suburb:'Clyde North',rate:6.9},{name:'Meridian',suburb:'Clyde North',rate:10.0},
+    {name:'Smiths Lane',suburb:'Clyde North',rate:14.6},{name:'Orana',suburb:'Clyde North',rate:13.8},
+    {name:'Five Farms',suburb:'Clyde North',rate:9.0},{name:'Verve',suburb:'Clyde North',rate:5.2},
+    {name:'Riverfield',suburb:'Clyde',rate:10.3},{name:'One Bells',suburb:'Clyde',rate:3.5},
+    {name:'Evergreen',suburb:'Clyde',rate:7.2},{name:'Minta',suburb:'Berwick',rate:6.7},
+    {name:'Kingbird',suburb:'Botanic Ridge',rate:2.4},{name:'Canopy at Amstel',suburb:'Cranbourne',rate:3.2},
+    {name:'Brompton Life',suburb:'Cranbourne South',rate:7.2},{name:'Smiths Park',suburb:'Clyde North',rate:3.8},
+    {name:'Oak Grove',suburb:'Clyde North',rate:6.3},{name:'Northside',suburb:'Clyde North',rate:4.2},
+  ],
+  Melton:[
+    {name:'Woodlea',suburb:'Aintree',rate:10.6},{name:'Atherstone',suburb:'Strathtulloh',rate:14.0},
+    {name:'Mt Atkinson',suburb:'Truganina',rate:17.4},{name:'Grandview',suburb:'Truganina',rate:7.0},
+    {name:'Exford Waters',suburb:'Weir Views',rate:7.6},{name:'Deanside Village',suburb:'Deanside',rate:3.6},
+    {name:'Carolina',suburb:'Deanside',rate:3.1},{name:'Aspire West',suburb:'Fraser Rise',rate:2.9},
+    {name:'Botania',suburb:'Fraser Rise',rate:2.5},{name:'Westwood',suburb:'Fraser Rise',rate:9.4},
+    {name:'Attwell',suburb:'Deanside',rate:3.5},{name:'Seventh Bend',suburb:'Weir Views',rate:6.7},
+    {name:'Key West',suburb:'Thornhill Park',rate:3.5},{name:'Thornhill Central',suburb:'Thornhill Park',rate:2.5},
+  ],
+  Wyndham:[
+    {name:'Manor Lakes',suburb:'Manor Lakes',rate:13.0},{name:'Harpley',suburb:'Werribee',rate:10.5},
+    {name:'The Grove',suburb:'Tarneit',rate:12.2},{name:'Riverwalk',suburb:'Werribee',rate:3.8},
+    {name:'Creekstone',suburb:'Tarneit',rate:4.0},{name:'Newhaven',suburb:'Tarneit',rate:3.6},
+    {name:'Windermere',suburb:'Mambourin',rate:7.0},{name:'Verdant Hill',suburb:'Tarneit',rate:3.5},
+    {name:'Emerald Park',suburb:'Tarneit',rate:3.7},{name:'Alamora',suburb:'Tarneit',rate:8.0},
+    {name:'Westbrook',suburb:'Truganina',rate:6.6},{name:'Grand Central',suburb:'Tarneit',rate:3.7},
+    {name:'Mambourin',suburb:'Mambourin',rate:7.4},{name:'Unity Park',suburb:'Tarneit',rate:3.7},
+  ],
+  Hume:[
+    {name:'Highlands',suburb:'Craigieburn',rate:11.5},{name:'Merrifield',suburb:'Mickleham',rate:13.4},
+    {name:'Cloverton',suburb:'Kalkallo',rate:10.9},{name:'Botanical',suburb:'Mickleham',rate:6.5},
+    {name:'True North Greenvale',suburb:'Greenvale',rate:3.1},{name:'Woodsong',suburb:'Mickleham',rate:3.3},
+    {name:'Dunhelen',suburb:'Greenvale',rate:1.4},
+  ],
+  Cardinia:[{name:'Arcadia',suburb:'Officer',rate:2.2}],
+  Mitchell:[{name:'Seymour Estate',suburb:'Seymour',rate:1.0}],
+};
+const SUBURB_MAP={
+  Whittlesea:['wollert','donnybrook','mernda','epping','doreen','whittlesea','woodstock'],
+  Casey:['clyde north','clyde','cranbourne','berwick','botanic ridge','hampton park','narre warren'],
+  Melton:['fraser rise','deanside','rockbank','truganina','aintree','strathtulloh','weir views','melton','thornhill park'],
+  Wyndham:['tarneit','werribee','wyndham vale','manor lakes','point cook','hoppers crossing','mambourin'],
+  Hume:['craigieburn','mickleham','kalkallo','greenvale','sunbury'],
+  Cardinia:['officer','pakenham','beaconsfield'],
+  Mitchell:['wallan','kilmore','broadford','seymour'],
+};
+
+// ══════════════════════════════════════════════════════
+// EXPLORERS REGISTER
+// ══════════════════════════════════════════════════════
+const EXPLORERS_REGISTER=[
+  {name:'Armadale',address:'117 Kooyong Rd, Armadale VIC 3143',places:168,occ:48,fee:203},
+  {name:'Ashwood',address:'205 High Street Rd, Ashwood VIC 3147',places:130,occ:91,fee:184},
+  {name:'Beaconsfield',address:'2 Pink Hill Blvd, Beaconsfield VIC 3807',places:130,occ:103,fee:169},
+  {name:'Boronia',address:'265 Boronia Rd, Boronia VIC 3155',places:152,occ:102,fee:166},
+  {name:'Brighton East',address:'761 Nepean Hwy, Brighton East VIC 3187',places:148,occ:85,fee:195},
+  {name:'Clyde North',address:'15 Australorp Dr, Clyde North VIC 3978',places:152,occ:7,fee:166},
+  {name:'Croydon',address:'84-86 Hull Rd, Croydon VIC 3136',places:130,occ:99,fee:166},
+  {name:'Dandenong',address:'159 Princes Hwy, Dandenong VIC 3175',places:162,occ:67,fee:163},
+  {name:'Essendon',address:'30-32 Lincoln Rd, Essendon VIC 3040',places:140,occ:100,fee:186},
+  {name:'Frankston North',address:'2-8 Ballarto Rd, Frankston North VIC 3200',places:142,occ:90,fee:163},
+  {name:'Greenvale',address:'1 Darmain Dr, Greenvale VIC 3059',places:152,occ:95,fee:169},
+  {name:'Mornington',address:'102 Strachans Rd, Mornington VIC 3931',places:150,occ:94,fee:172},
+  {name:'Mt Cottrell',address:'55 Goodison Grove, Mt Cottrell VIC 3024',places:154,occ:73,fee:166},
+  {name:'Nunawading',address:'86-88 Springvale Rd, Nunawading VIC 3131',places:154,occ:53,fee:184},
+  {name:'Surrey Hills (Elgar)',address:'221 Elgar Rd, Surrey Hills VIC 3127',places:132,occ:54,fee:181},
+  {name:'Surrey Hills (Stanley)',address:'1 Stanley Terrace, Surrey Hills VIC 3127',places:112,occ:52,fee:183},
+  {name:'Tarneit',address:'80 Homebush Dr, Tarneit VIC 3029',places:140,occ:96,fee:168},
+  {name:'Werribee',address:'28 Scotsburn Gr, Werribee VIC 3030',places:132,occ:56,fee:172},
+  {name:'Williams Landing',address:'2 Fogarty St, Williams Landing VIC 3027',places:168,occ:101,fee:176},
+  {name:'Williamstown',address:'130 Ferguson St, Williamstown VIC 3016',places:176,occ:102,fee:188},
+  {name:'Wallan',address:'103 Stanley St, Wallan VIC',places:184,occ:3,fee:168},
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let detectedLGA=null,selectedEstates=[],permits=[],compPhotos=[];
+let permitCtr=0,compCtr=0,addrTimer=null;
+let currentReport=null; // holds the last generated JSON data
+
+// ══════════════════════════════════════════════════════
+// FILE HANDLING
+// ══════════════════════════════════════════════════════
+function handleFile(inputId,boxId,nameId){
+  const f=document.getElementById(inputId).files[0];
+  if(!f)return;
+  document.getElementById(boxId).classList.add('has');
+  document.getElementById(nameId).textContent=f.name;
+}
+async function toBase64PDF(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(r.result.split(',')[1]);
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
+}
+async function compressImage(file,maxMB=4){
+  return new Promise((res,rej)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let{width,height}=img;
+        const mx=2000;
+        if(width>mx||height>mx){
+          if(width>height){height=Math.round(height*mx/width);width=mx;}
+          else{width=Math.round(width*mx/height);height=mx;}
+        }
+        canvas.width=width;canvas.height=height;
+        canvas.getContext('2d').drawImage(img,0,0,width,height);
+        let q=0.85,d=canvas.toDataURL('image/jpeg',q);
+        while(d.length*0.75>maxMB*1024*1024&&q>0.3){q-=0.1;d=canvas.toDataURL('image/jpeg',q);}
+        res(d.split(',')[1]);
+      };
+      img.onerror=rej;img.src=e.target.result;
+    };
+    reader.onerror=rej;reader.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// ADDRESS / LGA
+// ══════════════════════════════════════════════════════
+function onAddrChange(){
+  clearTimeout(addrTimer);
+  if(document.getElementById('site_type').value==='greenfield')
+    addrTimer=setTimeout(detectLGA,500);
+}
+function onSiteTypeChange(){
+  const st=document.getElementById('site_type').value;
+  const bar=document.getElementById('lga_bar');
+  document.getElementById('rs_note').textContent=st==='final'
+    ?'Final — no watermarks. TBC fields get footnote.'
+    :'Draft adds watermark and TBC badges to incomplete slides';
+  if(st==='greenfield'){bar.style.display='flex';detectLGA();}
+  else{bar.style.display='none';document.getElementById('estate_sec').style.display='none';}
+}
+function detectLGA(){
+  const addr=document.getElementById('address').value.toLowerCase();
+  if(!addr||addr.length<5)return;
+  let found=null;
+  for(const[lga,kw]of Object.entries(SUBURB_MAP)){if(kw.some(k=>addr.includes(k))){found=lga;break;}}
+  const dot=document.getElementById('lga_dot'),txt=document.getElementById('lga_txt');
+  if(found){
+    detectedLGA=found;
+    dot.className='sdot ok';
+    txt.textContent='LGA: '+found+' — '+(ESTATES[found]||[]).length+' estates';
+    loadEstateDropdown(found);
+    document.getElementById('estate_sec').style.display='block';
+    document.getElementById('lga_badge').textContent=found;
+  }else{
+    detectedLGA=null;dot.className='sdot warn';
+    txt.textContent='LGA not recognised — check suburb';
+    document.getElementById('estate_sec').style.display='none';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ESTATES
+// ══════════════════════════════════════════════════════
+function loadEstateDropdown(lga){
+  const sel=document.getElementById('estate_sel');
+  sel.innerHTML='<option value="">Select estate...</option>';
+  (ESTATES[lga]||[]).forEach((e,i)=>{
+    const o=document.createElement('option');o.value=i;o.textContent=e.name+' ('+e.suburb+')';sel.appendChild(o);
+  });
+  selectedEstates=[];renderEstates();
+}
+function addEstate(){
+  if(!detectedLGA)return;
+  const sel=document.getElementById('estate_sel');if(!sel.value)return;
+  const e=ESTATES[detectedLGA][parseInt(sel.value)];
+  if(selectedEstates.find(s=>s.name===e.name))return;
+  selectedEstates.push({...e,pct:100});sel.value='';renderEstates();
+}
+function removeEstate(i){selectedEstates.splice(i,1);renderEstates();}
+function updatePct(i,v){selectedEstates[i].pct=Math.min(100,Math.max(1,parseFloat(v)||100));updateEstateSummary();}
+function renderEstates(){
+  const list=document.getElementById('estate_list');
+  if(!selectedEstates.length){list.innerHTML='<div class="empty">No estates added yet</div>';document.getElementById('estate_sum').style.display='none';return;}
+  list.innerHTML='';
+  selectedEstates.forEach((e,i)=>{
+    const row=document.createElement('div');row.className='e-row';
+    row.innerHTML=`<div><div class="e-name">${e.name}</div><div class="e-suburb">${e.suburb}</div></div><div class="e-rate">${e.rate.toFixed(1)} lots/mo</div><div class="pct-wrap"><input class="pct-inp" type="number" min="1" max="100" value="${e.pct}" onchange="updatePct(${i},this.value)"><span style="font-size:11px;color:var(--muted);">%</span></div><button class="btn-del" onclick="removeEstate(${i})">x</button>`;
+    list.appendChild(row);
+  });
+  document.getElementById('estate_sum').style.display='block';updateEstateSummary();
+}
+function updateEstateSummary(){
+  const eff=selectedEstates.reduce((s,e)=>s+e.rate*(e.pct/100),0);
+  const lots=Math.round(eff*54),ch=Math.round(lots*0.42);
+  document.getElementById('s_rate').textContent=eff.toFixed(1);
+  document.getElementById('s_lots').textContent=lots.toLocaleString();
+  document.getElementById('s_ch').textContent=ch.toLocaleString();
+}
+function getEstateJSON(){
+  const eff=selectedEstates.reduce((s,e)=>s+e.rate*(e.pct/100),0);
+  return{applies:document.getElementById('site_type').value==='greenfield'&&selectedEstates.length>0,
+    lga:detectedLGA,estates:selectedEstates.map(e=>({name:e.name,suburb:e.suburb,monthly_rate:e.rate,pct:e.pct})),
+    total_monthly_rate:+eff.toFixed(2),months:54,children_per_dwelling:0.42,
+    new_lots:Math.round(eff*54),new_children:Math.round(eff*54*0.42)};
+}
+
+// ══════════════════════════════════════════════════════
+// PERMITS
+// ══════════════════════════════════════════════════════
+function addPermit(){
+  const id=++permitCtr;
+  permits.push({id,address:'',summary:'',places:'',stage:'DA Approved',discount:50,imgSrc:null});
+  renderPermits();
+}
+function removePermit(id){permits=permits.filter(p=>p.id!==id);renderPermits();}
+function updatePermit(id,f,v){const p=permits.find(p=>p.id===id);if(p){p[f]=v;if(f==='places'||f==='discount')rerenderEff(id);}}
+function rerenderEff(id){
+  const p=permits.find(p=>p.id===id);if(!p)return;
+  const eff=Math.round((parseInt(p.places)||0)*(1-p.discount/100));
+  const el=document.getElementById('eff_'+id);if(el)el.textContent=eff+' effective places';
+}
+function handlePermitImg(id,inp){
+  const f=inp.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const p=permits.find(p=>p.id===id);if(p)p.imgSrc=e.target.result;
+    const box=document.getElementById('pimg_'+id);
+    if(box){box.classList.add('has');let img=box.querySelector('img');if(!img){img=document.createElement('img');box.appendChild(img);}img.src=e.target.result;}
+  };reader.readAsDataURL(f);
+}
+function buildPermitCard(p, idx) {
+  const eff = Math.round((parseInt(p.places)||0)*(1-p.discount/100));
+  const div = document.createElement('div');
+  div.className = 'permit-card';
+  div.id = 'permit_card_' + p.id;
+  div.innerHTML = `<div class="permit-hdr">
+    <span class="permit-lbl">Permit ${idx+1}</span>
+    <span class="permit-addr-lbl" id="permit_addr_lbl_${p.id}">${p.address||''}</span>
+    <button class="btn-rm" onclick="removePermit(${p.id})">Remove</button>
+  </div>
+  <div class="permit-body">
+    <div>
+      <label class="plbl">Nearmaps aerial</label>
+      <div class="pimg" id="pimg_${p.id}">
+        <input type="file" accept=".jpg,.jpeg,.png" onclick="event.stopPropagation()" onchange="handlePermitImg(${p.id},this)">
+        <div style="font-size:16px;">🛰</div>
+        <div class="ubox-sub">Upload aerial</div>
+      </div>
+      <div class="eff-pill" id="eff_${p.id}">${eff} effective places</div>
+    </div>
+    <div class="pfields">
+      <div>
+        <label class="plbl">Address</label>
+        <input type="text" placeholder="e.g. 45 Innovation Dr, Wollert VIC 3750"
+          value="${p.address||''}"
+          oninput="updatePermit(${p.id},'address',this.value);document.getElementById('permit_addr_lbl_${p.id}').textContent=this.value">
+      </div>
+      <div>
+        <label class="plbl">Summary</label>
+        <textarea rows="2" style="font-size:11px;" placeholder="e.g. 128-place LDC. DA approved Oct 2024."
+          oninput="updatePermit(${p.id},'summary',this.value)">${p.summary||''}</textarea>
+      </div>
+      <div class="fg3">
+        <div>
+          <label class="plbl">Approved places</label>
+          <input type="number" placeholder="128" value="${p.places||''}"
+            oninput="updatePermit(${p.id},'places',this.value)">
+        </div>
+        <div>
+          <label class="plbl">Stage</label>
+          <select onchange="updatePermit(${p.id},'stage',this.value)" style="font-size:11px;padding:5px 7px;">
+            <option ${p.stage==='DA Lodged'?'selected':''}>DA Lodged</option>
+            <option ${p.stage==='DA Approved'?'selected':''}>DA Approved</option>
+            <option ${p.stage==='Under Construction'?'selected':''}>Under Construction</option>
+            <option ${p.stage==='On Hold'?'selected':''}>On Hold</option>
+            <option ${p.stage==='Lapsed'?'selected':''}>Lapsed</option>
+          </select>
+        </div>
+        <div>
+          <label class="plbl">Risk discount</label>
+          <select onchange="updatePermit(${p.id},'discount',parseInt(this.value));rerenderEff(${p.id})" style="font-size:11px;padding:5px 7px;">
+            <option value="0" ${p.discount===0?'selected':''}>0% Certain</option>
+            <option value="25" ${p.discount===25?'selected':''}>25% Likely</option>
+            <option value="50" ${p.discount===50?'selected':''}>50% Possible</option>
+            <option value="75" ${p.discount===75?'selected':''}>75% Unlikely</option>
+            <option value="100" ${p.discount===100?'selected':''}>100% Won't proceed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  // Restore image if already uploaded
+  if(p.imgSrc){
+    const box = div.querySelector('#pimg_'+p.id);
+    if(box){ box.classList.add('has'); const img=document.createElement('img'); img.src=p.imgSrc; box.appendChild(img); }
+  }
+  return div;
+}
+
+function renderPermits(){
+  const list = document.getElementById('permit_list');
+  if(!permits.length){ list.innerHTML='<div class="empty">No permits added</div>'; return; }
+  // Only re-render cards that do not already exist in the DOM
+  // Remove cards for deleted permits
+  list.querySelectorAll('.permit-card').forEach(el => {
+    const id = parseInt(el.id.replace('permit_card_',''));
+    if(!permits.find(p => p.id === id)) el.remove();
+  });
+  // Remove empty placeholder
+  const empty = list.querySelector('.empty');
+  if(empty) empty.remove();
+  // Add cards for new permits only
+  permits.forEach((p, idx) => {
+    if(!document.getElementById('permit_card_'+p.id)){
+      list.appendChild(buildPermitCard(p, idx));
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// COMPETITOR PHOTOS
+// ══════════════════════════════════════════════════════
+function addCompPhoto(){
+  const id=++compCtr;compPhotos.push({id,name:'',imgSrc:null});renderCompPhotos();
+}
+function removeCompPhoto(id){compPhotos=compPhotos.filter(c=>c.id!==id);renderCompPhotos();}
+function handleCompImg(id,inp){
+  const f=inp.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=e=>{const c=compPhotos.find(c=>c.id===id);if(c)c.imgSrc=e.target.result;
+    const box=document.getElementById('cimg_'+id);
+    if(box){box.classList.add('has');let img=box.querySelector('img');if(!img){img=document.createElement('img');box.appendChild(img);}img.src=e.target.result;}
+  };reader.readAsDataURL(f);
+}
+function buildCompPhotoCard(c, idx) {
+  const div = document.createElement('div');
+  div.id = 'comp_card_' + c.id;
+  div.style.cssText = 'display:grid;grid-template-columns:90px 1fr 30px;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:8px;margin-bottom:7px;';
+  div.innerHTML = `
+    <div class="pimg" id="cimg_${c.id}" style="height:65px;">
+      <input type="file" accept=".jpg,.jpeg,.png" onclick="event.stopPropagation()" onchange="handleCompImg(${c.id},this)">
+      <div style="font-size:13px;">📷</div>
+      <div style="font-size:9px;color:var(--muted);">Upload</div>
+    </div>
+    <div>
+      <label class="plbl">Competitor name (must match exactly)</label>
+      <input type="text" placeholder="e.g. Keysborough Community Children's Centre"
+        value="${c.name||''}"
+        oninput="compPhotos[${idx}].name=this.value">
+    </div>
+    <button class="btn-del" onclick="removeCompPhoto(${c.id})">x</button>`;
+  if(c.imgSrc){
+    const box = div.querySelector('#cimg_'+c.id);
+    if(box){ box.classList.add('has'); const img=document.createElement('img'); img.src=c.imgSrc; box.appendChild(img); }
+  }
+  return div;
+}
+
+function renderCompPhotos(){
+  const list = document.getElementById('comp_list');
+  if(!compPhotos.length){ list.innerHTML='<div class="empty">No competitor photos added</div>'; return; }
+  list.querySelectorAll('[id^="comp_card_"]').forEach(el => {
+    const id = parseInt(el.id.replace('comp_card_',''));
+    if(!compPhotos.find(c => c.id === id)) el.remove();
+  });
+  const empty = list.querySelector('.empty');
+  if(empty) empty.remove();
+  compPhotos.forEach((c, idx) => {
+    if(!document.getElementById('comp_card_'+c.id)){
+      list.appendChild(buildCompPhotoCard(c, idx));
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════════
+function saveToURL(){
+  const state={address:document.getElementById('address').value,
+    site_type:document.getElementById('site_type').value,
+    proposed_places:document.getElementById('proposed_places').value,
+    lga:detectedLGA,estates:selectedEstates,
+    permits:permits.map(p=>({...p,imgSrc:null})),
+    rs:document.querySelector('input[name="rs"]:checked').value};
+  const enc=btoa(encodeURIComponent(JSON.stringify(state)));
+  const url=window.location.href.split('#')[0]+'#'+enc;
+  window.history.replaceState(null,'',url);
+  document.getElementById('share_url').value=url;
+  document.getElementById('share_sec').style.display='block';
+  document.getElementById('nav_status').textContent='Saved '+new Date().toLocaleTimeString();
+}
+function loadFromURL(){
+  const hash=window.location.hash.slice(1);if(!hash){alert('No saved state in URL.');return;}
+  try{
+    const s=JSON.parse(decodeURIComponent(atob(hash)));
+    if(s.address)document.getElementById('address').value=s.address;
+    if(s.site_type){document.getElementById('site_type').value=s.site_type;onSiteTypeChange();}
+    if(s.proposed_places)document.getElementById('proposed_places').value=s.proposed_places;
+    if(s.lga){detectedLGA=s.lga;loadEstateDropdown(s.lga);}
+    if(s.estates){selectedEstates=s.estates;renderEstates();}
+    if(s.permits){permits=s.permits;permitCtr=permits.length;renderPermits();}
+    if(s.rs)document.querySelector(`input[name="rs"][value="${s.rs}"]`).checked=true;
+    if(s.lga){document.getElementById('estate_sec').style.display='block';document.getElementById('lga_badge').textContent=s.lga;}
+    document.getElementById('nav_status').textContent='Loaded from saved link';
+  }catch(e){alert('Could not load saved state.');}
+}
+function copyLink(){
+  const el=document.getElementById('share_url');el.select();document.execCommand('copy');
+  event.target.textContent='Copied!';setTimeout(()=>event.target.textContent='Copy',2000);
+}
+window.addEventListener('load',()=>{
+  // Check URL for API key — e.g. ?key=sk-ant-api03-...
+  // This lets you share a pre-keyed URL with team members
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlKey = urlParams.get('key');
+  if(urlKey && urlKey.startsWith('sk-ant-')){
+    saveApiKey(urlKey);
+    document.getElementById('api_key').value = urlKey;
+    // Remove key from URL bar so it's not visible/shareable accidentally
+    const cleanURL = window.location.pathname + window.location.hash;
+    window.history.replaceState(null, '', cleanURL);
+  }
+  if(window.location.hash)loadFromURL();
+  // Auto-fill API key from localStorage
+  const savedKey = localStorage.getItem('explorers_api_key');
+  if(savedKey) document.getElementById('api_key').value = savedKey;
+});
+
+// MutationObserver: if Claude in Chrome sets the api_key field value via DOM
+// (e.g. element.value = '...') without firing input/change events, this catches it
+(function(){
+  const observer = new MutationObserver(() => {
+    const field = document.getElementById('api_key');
+    if(field && field.value && field.value !== localStorage.getItem('explorers_api_key')){
+      saveApiKey(field.value);
+    }
+  });
+  // Start observing once DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const field = document.getElementById('api_key');
+    if(field) observer.observe(field, { attributes: true, attributeFilter: ['value'] });
+  });
+  // Also poll briefly after load for programmatic changes
+  window.addEventListener('load', () => {
+    let checks = 0;
+    const poll = setInterval(() => {
+      const field = document.getElementById('api_key');
+      if(field && field.value.trim()) {
+        saveApiKey(field.value.trim());
+      }
+      if(++checks >= 20) clearInterval(poll); // poll for 10 seconds after load
+    }, 500);
+  });
+}());
+
+// ══════════════════════════════════════════════════════
+// GENERATE — MAIN ENTRY POINT
+// ══════════════════════════════════════════════════════
+const STEPS=[
+  'Extracting GapMaps data from PDFs...',
+  'Researching competitor centres (ACECQA + StartingBlocks)...',
+  'Finding nearby schools and retail centres...',
+  'Calculating drive times to all Explorers centres...',
+  'Calculating 6-step ratio funnel...',
+  'Generating recommendation and next steps text...',
+  'Building slides 1-4...',
+  'Building slides 5-8...',
+  'Building slides 9-12...',
+  'Finalising report...',
+];
+
+// ── API KEY HELPERS ───────────────────────────────────
+// Called by oninput/onchange on the field
+function saveApiKey(val){
+  if(val && val.trim()) localStorage.setItem('explorers_api_key', val.trim());
+}
+// Reads key from field first, falls back to localStorage
+// Claude in Chrome can also call: setApiKey('sk-ant-...') to inject the key
+function getApiKey(){
+  const field = document.getElementById('api_key');
+  const fromField = field ? field.value.trim() : '';
+  if(fromField) { localStorage.setItem('explorers_api_key', fromField); return fromField; }
+  return localStorage.getItem('explorers_api_key') || '';
+}
+// Exposed global so Claude in Chrome extension can set the key programmatically:
+// window.setApiKey('sk-ant-api03-...')
+window.setApiKey = function(key){
+  if(!key) return;
+  localStorage.setItem('explorers_api_key', key.trim());
+  const field = document.getElementById('api_key');
+  if(field) field.value = key.trim();
+};
+// Exposed global so Claude in Chrome can trigger generate without clicking the button
+window.generateReport = function(mode){ generate(mode || 'draft'); };
+
+async function generate(mode){
+  const apiKey = getApiKey();
+  if(!apiKey){alert('Please enter your Claude API key first.');return;}
+  const addr=document.getElementById('address').value.trim();
+  if(!addr){alert('Please enter a site address.');return;}
+
+  const isDraft=mode==='draft';
+  document.getElementById('prog_area').style.display='block';
+  document.getElementById('report_area').style.display='none';
+  document.getElementById('prog_title').textContent=isDraft?'Generating draft report...':'Generating final report...';
+
+  const stepsEl=document.getElementById('prog_steps');
+  stepsEl.innerHTML=STEPS.map((s,i)=>`<div class="prog-step" id="ps_${i}"><div class="sdot2" id="pd_${i}"></div><span>${s}</span></div>`).join('');
+
+  let si=0;
+  const iv=setInterval(()=>{
+    if(si>0){const d=document.getElementById('pd_'+(si-1));if(d)d.className='sdot2 done';}
+    if(si<STEPS.length){
+      const d=document.getElementById('pd_'+si);if(d)d.className='sdot2 act';
+      document.getElementById('prog_bar').style.width=Math.round((si/STEPS.length)*85)+'%';si++;
+    }
+  },2200);
+
+  try{
+    const data=await callClaudeForData(apiKey,addr,isDraft);
+    clearInterval(iv);
+    STEPS.forEach((_,i)=>{const d=document.getElementById('pd_'+i);if(d)d.className='sdot2 done';});
+    document.getElementById('prog_bar').style.width='100%';
+
+    currentReport=data;
+    data._meta={address:addr,isDraft,reportDate:new Date().toLocaleDateString('en-AU',{month:'long',year:'numeric'})};
+
+    // Attach aerial base64 if available — file upload or imported
+    const aerFile=document.getElementById('faer').files[0];
+    if(aerFile) data._aerialB64='data:image/jpeg;base64,'+await compressImage(aerFile);
+    else if(window._importedAerialB64) data._aerialB64=window._importedAerialB64;
+    else data._aerialB64=null;
+
+    // Attach permit images
+    permits.forEach((p,i)=>{if(p.imgSrc)data.pipeline_permits[i]={...data.pipeline_permits[i],imgSrc:p.imgSrc};});
+
+    // Attach competitor photos
+    compPhotos.filter(c=>c.name&&c.imgSrc).forEach(c=>{
+      const comp=data.competitors?.find(x=>x.name===c.name);
+      if(comp)comp.photo=c.imgSrc;
+    });
+
+    setTimeout(()=>{
+      document.getElementById('prog_area').style.display='none';
+      document.getElementById('report_area').style.display='block';
+      document.getElementById('report_title').textContent=addr+(isDraft?' — DRAFT':'');
+      document.getElementById('report_msg').textContent=isDraft?'Draft':'Final report';
+      buildReport(data);
+      document.getElementById('report_area').scrollIntoView({behavior:'smooth'});
+      // Show mystery shopper section
+      initMysteryShopperSection(data);
+    },400);
+
+  }catch(err){
+    clearInterval(iv);
+    document.getElementById('prog_area').style.display='none';
+    const msg = err?.message || (typeof err === 'string' ? err : JSON.stringify(err)) || 'Unknown error — check browser console (F12)';
+    alert('Error: '+msg);
+    console.error('Generate error:', err, String(err));
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// CLAUDE API CALL — RETURNS JSON ONLY
+// ══════════════════════════════════════════════════════
+async function callClaudeForData(apiKey,addr,isDraft){
+  const content=[];
+
+  // Attach aerial — use uploaded file or imported base64
+  const aerFile=document.getElementById('faer').files[0];
+  if(aerFile){
+    const b64=await compressImage(aerFile);
+    content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}});
+  } else if(window._importedAerialB64){
+    const b64=(window._importedAerialB64.includes(','))?window._importedAerialB64.split(',')[1]:window._importedAerialB64;
+    content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}});
+  }
+
+  // Attach PDFs
+  const f5=document.getElementById('f5').files[0];
+  if(f5){const b64=await toBase64PDF(f5);content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}});}
+  const f10=document.getElementById('f10').files[0];
+  if(f10){const b64=await toBase64PDF(f10);content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}});}
+
+  const st=document.getElementById('site_type').value||'unknown';
+  const places=document.getElementById('proposed_places').value||'TBC';
+  const estate=getEstateJSON();
+  const pipelineBlock=permits.length?permits.map((p,i)=>`Permit ${i+1}: ${p.address}|${p.summary}|places:${p.places}|stage:${p.stage}|discount:${p.discount}%|effective:${Math.round((parseInt(p.places)||0)*(1-p.discount/100))}`).join('\n'):'None identified.';
+
+  const explorersList=EXPLORERS_REGISTER.map(e=>`${e.name}|${e.address}|${e.places} places|${e.occ}% occ|$${e.fee}/day`).join('\n');
+
+  const csvBlock = getCSVDataForPrompt();
+  const prompt=`You are a childcare industry analyst. Extract data and research for a site feasibility report. Return ONLY valid JSON — no explanation, no markdown, no code fences.
+
+SITE: ${addr}
+TYPE: ${st}
+PROPOSED PLACES: ${places}
+FILES: ${f5?'5-min GapMaps PDF attached':'no 5-min PDF'} | ${f10?'10-min GapMaps PDF attached':'no 10-min PDF'} | ${aerFile?'Nearmaps aerial attached':'no aerial'} | ${parsedCSV5?'5-min CSV pre-parsed':'no 5-min CSV'} | ${parsedCSV10?'10-min CSV pre-parsed':'no 10-min CSV'}
+
+${csvBlock}
+
+HOUSING PIPELINE:
+${estate.applies?`LGA: ${estate.lga}\nEstates: ${estate.estates.map(e=>`${e.name} ${e.monthly_rate} lots/mo ${e.pct}%`).join(', ')}\nTotal monthly rate: ${estate.total_monthly_rate}\nNew lots (×54mo): ${estate.new_lots}\nNew children (×0.42): ${estate.new_children}`:'Not applicable — established suburb'}
+
+PIPELINE PERMITS:
+${pipelineBlock}
+
+EXPLORERS CENTRES (calculate drive time from site to ALL, pick 3 quickest — Wednesday 8am):
+${explorersList}
+
+COMPETITOR RESEARCH — FOLLOW EXACTLY:
+- The CSV data above tells you exactly how many LDC centres and places are in the catchment
+- Use the ldc_centres count from the 5-min CSV as your target — find EXACTLY that many centres
+- DO NOT invent or hallucinate centre names — every centre you list must be verified by searching ACECQA
+- Search ACECQA national register at https://www.acecqa.gov.au/resources/national-registers for the site suburb and adjacent suburbs
+- Keep searching adjacent suburbs until your count matches the ldc_centres figure from the CSV
+- ONLY list centres you have actually found on ACECQA — if you cannot find enough real centres, stop at what you find and note the shortfall
+- For EVERY real centre found, fetch their individual StartingBlocks page to get the fee:
+  1. Search "[Centre Name] [Suburb] startingblocks.gov.au" to find their URL
+  2. Fetch that exact URL
+  3. In the Fees section find the table containing "Full day session" — extract the dollar amount e.g. $166.00
+  4. Also extract: NQS rating, NQS date, vacancy status (Permanent Yes/No from vacancies table), hours
+- If not on StartingBlocks, set fee to "Call to confirm"
+- For 10-min catchment, research additional real centres beyond the 5-min boundary, up to 15 extra — again only list centres verified on ACECQA
+- Note operator for each centre (Guardian, G8, Goodstart, Nido, community, private etc.)
+- CRITICAL: Never make up a centre name. If unsure, omit it. Real data only.
+
+RATIO RULES:
+- Higher ratio = MORE children per place = BETTER (undersupplied market)
+- Lower ratio = FEWER children per place = WORSE (oversupplied)
+- VIC benchmark = 2.42x (above this is good, below is caution)
+- Demand signal: >3.0x = STRONG, 2.0-3.0x = MODERATE, <2.0x = CAUTION
+- CALD factor formula: 1 - ((site_sc_pct + site_se_pct - 11.59) * 0.005) — cap between 0.70 and 1.00
+- Participation factor: site_est_participation / 76.4 (Greater Melbourne benchmark)
+- Step 4: children / (existing_places + pipeline_permit_effective_places + proposed_explorers_places) — proposed Explorers centre is treated as pipeline supply, same as any other new centre
+- Step 5 (greenfield): (children + new_housing_children) / (existing + pipeline_permits + proposed_explorers_places)
+- Step 6 effective ratio: same denominator as Step 5 — no further adjustment. Step 6 = final effective ratio after all adjustments. Label it 'Effective ratio' not 'Post-entry ratio'.
+
+Return this EXACT JSON schema (fill all fields, use null if unknown, TBC if data not available — NEVER invent competitor centre names or addresses):
+
+{
+  "site": {
+    "address": "",
+    "lga": "",
+    "proposed_places": 0,
+    "site_type": "",
+    "report_date": "",
+    "aerial_date": "TBC"
+  },
+  "gapmaps_5min": {
+    "population_2024": 0,
+    "children_0_5": 0,
+    "ldc_places": 0,
+    "ldc_centres": 0,
+    "ratio": 0.0,
+    "avg_hh_income": 0,
+    "avg_income_capita": 0,
+    "seifa": 0.0,
+    "aus_born_pct": 0.0,
+    "sc_asia_pct": 0.0,
+    "se_asia_pct": 0.0,
+    "ne_asia_pct": 0.0,
+    "uk_ireland_pct": 0.0,
+    "fee_24_35mo": 0.0,
+    "pop_growth_rate": 0.0,
+    "avg_mortgage_mth": 0,
+    "avg_weekly_rent": 0,
+    "avg_hh_size": 0.0,
+    "motor_vehicles_hh": 0.0,
+    "own_pct": 0.0,
+    "mortgage_pct": 0.0,
+    "rent_pct": 0.0,
+    "workers_per_place": 0.0,
+    "projections_0_5": [0,0,0,0,0,0,0,0,0,0,0,0,0]
+  },
+  "gapmaps_10min": {
+    "children_0_5": 0,
+    "ldc_places": 0,
+    "ldc_centres": 0,
+    "ratio": 0.0,
+    "fee_24_35mo": 0.0,
+    "workers_per_place": 0.0,
+    "aus_born_pct": 0.0,
+    "sc_asia_pct": 0.0,
+    "se_asia_pct": 0.0,
+    "ne_asia_pct": 0.0,
+    "uk_ireland_pct": 0.0
+  },
+  "ratio_funnel": {
+    "step1_raw": 0.0,
+    "step2_participation": 0.0,
+    "step3_cald": 0.0,
+    "step4_pipeline_childcare": 0.0,
+    "step5_housing_or_same": 0.0,
+    "step6_post_entry": 0.0,  // same as step5 numerator — Explorers already in denominator at step4
+    "participation_factor": 0.0,
+    "cald_factor": 0.0,
+    "cald_suppression_level": "LOW",
+    "demand_signal": "MODERATE",
+    "demand_colour": "amber"
+  },
+  "competitors": [
+    {
+      "name": "",
+      "address": "",
+      "places": 0,
+      "fee": "Call to confirm",
+      "nqs": "Meeting NQS",
+      "nqs_date": "",
+      "nqs_colour": "amber",
+      "vacancies": "",
+      "hours": "6:30am-6:30pm",
+      "operator": "",
+      "note": "",
+      "photo": null
+    }
+  ],
+  "competitors_10min": [
+    {"name":"","address":"","distance":"","places":0,"fee":"","nqs":"","vacancies":""}
+  ],
+  "schools": [
+    {"name":"","distance":"","type":"","sector":"","enrolments":""}
+  ],
+  "retail": [
+    {"name":"","distance":"","anchors":"","note":""}
+  ],
+  "pipeline_permits": [
+    {
+      "address": "",
+      "summary": "",
+      "approved_places": 0,
+      "stage": "DA Approved",
+      "stage_colour": "EF9F27",
+      "risk_discount_pct": 0,
+      "effective_places": 0,
+      "imgSrc": null
+    }
+  ],
+  "explorers_nearest": [
+    {
+      "name": "",
+      "address": "",
+      "places": 0,
+      "fee": 0,
+      "occ_pct": 0,
+      "drive_min": 0,
+      "distance_km": 0.0,
+      "route": ""
+    }
+  ],
+  "housing_pipeline": ${JSON.stringify(estate)},
+  "text": {
+    "key_observations": ["","","","",""],
+    "school_insight": "",
+    "market_signal": "",
+    "recommendation_para1": "",
+    "recommendation_para2": "",
+    "recommendation_para3": "",
+    "next_steps": ["","","","","",""]
+  },
+  "is_draft": ${isDraft}
+}
+
+IMPORTANT: Return ONLY the JSON object. No text before or after. No markdown. Start with { and end with }.`;
+
+  content.push({type:'text',text:prompt});
+
+  const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-5-20250929',max_tokens:12000,messages:[{role:'user',content}]})
+  });
+  if(!resp.ok){const e=await resp.json();throw new Error(e.error?.message||'API error '+resp.status);}
+  const result=await resp.json();
+  const raw=result.content.map(c=>c.text||'').join('');
+  // Extract JSON
+  const match=raw.match(/\{[\s\S]*\}/);
+  if(!match)throw new Error('Claude did not return valid JSON. Raw: '+raw.slice(0,200));
+  return JSON.parse(match[0]);
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE RENDERER — pure code, no AI
+// ══════════════════════════════════════════════════════
+const C={
+  green:'#3A6B4A',greenDk:'#274D34',greenLt:'#E4EFE8',
+  terra:'#C8543A',terraDk:'#7A2818',terraLt:'#F5E8E4',
+  sand:'#D4A85C',sandLt:'#FBF3E6',
+  charcoal:'#2C2A27',white:'#FFFFFF',cream:'#FAF7F2',
+  muted:'#7A7168',border:'#E0D8CE',navy:'#2C2A27',
+  amber:'#C4842A',red:'#B83A2A',blue:'#185FA5',
+  amberLt:'#FFF8E1',redLt:'#FDE8E8',greenLt2:'#E8F5E9',
+};
+
+function buildReport(data){
+  const viewer=document.getElementById('slide_viewer');
+  viewer.innerHTML='';
+  // Slide order: Cover, Site Details, Demand Analysis, Participation Funnel,
+  // Competitors 5-min, Extended Catchment 10-min, Explorers Centres,
+  // Pipeline Permits, Demographics, Schools & Shopping, Population Projections, Verdict
+  const slides=[
+    buildSlide1(data),   // Cover
+    buildSlide2(data),   // Site Details
+    buildSlide4(data),   // Demand Analysis (was slide 4)
+    buildSlide6(data),   // Participation & Effective Demand funnel (was slide 6)
+    ...buildSlide7(data),// Competitors 5-min (was slide 7, paginated)
+    buildSlide8(data),   // Extended Catchment & Fee Benchmark 10-min (was slide 8)
+    buildSlide9(data),   // Nearest Explorers Centres (was slide 9)
+    ...buildSlide10(data),// Pipeline Permits (was slide 10, paginated)
+    buildSlide5(data),   // Demographics (was slide 5)
+    buildSlide3(data),   // Schools & Shopping (was slide 3)
+    buildSlide11(data),  // Population Projections (was slide 11)
+    buildSlide12(data),  // Summary & Recommendation (was slide 12)
+  ];
+  slides.forEach(s=>{
+    const wrap=document.createElement('div');
+    wrap.className='slide-wrap';
+    wrap.appendChild(s);
+    viewer.appendChild(wrap);
+  });
+}
+
+// ── HELPERS ──────────────────────────────────────────
+function slide(bg=C.cream){
+  const s=document.createElement('div');
+  s.className='slide';s.style.background=bg;return s;
+}
+function hdr(s,title,addr){
+  const h=el('div',{position:'absolute',left:'0',top:'0',width:'1280px',height:'55px',background:C.terra});
+  h.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'6px',height:'55px',background:C.terraDk}));
+  h.appendChild(txt(title,{position:'absolute',left:'22px',top:'0',width:'700px',height:'55px',fontSize:'18px',fontWeight:'600',color:C.white,display:'flex',alignItems:'center'}));
+  h.appendChild(txt(addr||'',{position:'absolute',right:'16px',top:'0',width:'540px',height:'55px',fontSize:'11px',color:'#C8E6D4',display:'flex',alignItems:'center',justifyContent:'flex-end'}));
+  s.appendChild(h);
+}
+function el(tag,styles={},cls=''){
+  const e=document.createElement(tag);
+  Object.assign(e.style,styles);
+  if(cls)e.className=cls;
+  return e;
+}
+function txt(content,styles={}){
+  const e=document.createElement('div');
+  e.textContent=content;
+  Object.assign(e.style,styles);
+  return e;
+}
+function card(s,x,y,w,h,accent=null,bg=C.white){
+  const c=el('div',{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:h+'px',background:bg,border:'1px solid '+C.border,borderRadius:'6px',boxShadow:'0 1px 4px rgba(0,0,0,0.07)'});
+  if(accent){const a=el('div',{position:'absolute',left:'0',top:'0',width:'7px',height:'100%',background:accent,borderRadius:'6px 0 0 6px'});c.appendChild(a);}
+  s.appendChild(c);return c;
+}
+function kpi(s,x,y,w,h,value,label,color){
+  const c=card(s,x,y,w,h,color);
+  c.appendChild(txt(value,{position:'absolute',left:'18px',top:'10px',width:(w-28)+'px',fontSize:'30px',fontWeight:'600',color:color,fontFamily:"'DM Sans',sans-serif"}));
+  c.appendChild(txt(label,{position:'absolute',left:'18px',bottom:'10px',width:(w-28)+'px',fontSize:'11px',color:C.muted,lineHeight:'1.3',fontFamily:"'DM Sans',sans-serif"}));
+}
+function pill(s,x,y,w,h,label,bg,color=C.white){
+  const p=el('div',{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:h+'px',background:bg,borderRadius:'4px',display:'flex',alignItems:'center',justifyContent:'center'});
+  p.appendChild(txt(label,{fontSize:'10px',fontWeight:'600',color:color,letterSpacing:'0.05em',fontFamily:"'DM Sans',sans-serif"}));
+  s.appendChild(p);
+}
+function divLine(s,x,y,w){
+  const l=el('div',{position:'absolute',left:x+'px',top:y+'px',width:w+'px',height:'1px',background:C.border});s.appendChild(l);
+}
+function tbl(s,x,y,w,headers,rows,colWidths){
+  const t=el('div',{position:'absolute',left:x+'px',top:y+'px',width:w+'px'});
+  // header
+  const hr=el('div',{display:'flex',background:C.navy,borderRadius:'4px 4px 0 0'});
+  headers.forEach((h,i)=>{
+    const c=el('div',{width:colWidths[i]+'px',padding:'5px 8px',fontSize:'9px',fontWeight:'600',color:C.white,flexShrink:'0',fontFamily:"'DM Sans',sans-serif"});
+    c.textContent=h;hr.appendChild(c);
+  });
+  t.appendChild(hr);
+  rows.forEach((row,ri)=>{
+    const rr=el('div',{display:'flex',background:ri%2===0?'#FAFAF8':C.white,borderBottom:'1px solid '+C.border});
+    row.forEach((cell,ci)=>{
+      const c=el('div',{width:colWidths[ci]+'px',padding:'5px 8px',fontSize:'10px',color:C.charcoal,flexShrink:'0',fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'});
+      c.textContent=cell||'—';
+      if(ci===colWidths.length-1){
+        if(cell==='Yes'||cell==='Exceed.')c.style.color=C.green;
+        if(cell==='No'||cell==='Working')c.style.color=C.red;
+      }
+      rr.appendChild(c);
+    });
+    t.appendChild(rr);
+  });
+  s.appendChild(t);return t;
+}
+function fmtOcc(occ){
+  if(occ==null||occ===undefined)return'—';
+  if(occ>100)return'Waitlist';
+  if(occ>95)return'Near capacity';
+  return occ+'%';
+}
+function occColor(occ){
+  if(occ==null)return C.muted;
+  if(occ>100)return C.red;
+  if(occ>95)return C.amber;
+  if(occ<70)return C.muted;
+  return C.green;
+}
+function nqsColor(nqs){
+  if(!nqs)return C.muted;
+  if(nqs.toLowerCase().includes('exceeding'))return C.green;
+  if(nqs.toLowerCase().includes('working'))return C.red;
+  if(nqs.toLowerCase().includes('meeting'))return C.amber;
+  return C.muted;
+}
+function demandColor(sig){
+  const s=(sig||'').toUpperCase();
+  if(s.includes('STRONG'))return C.green;
+  if(s.includes('CAUTION'))return C.red;
+  return C.amber;
+}
+function draftWatermark(s){
+  const d=el('div',{position:'absolute',left:'0',top:'0',width:'1280px',height:'720px',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'none',zIndex:'100'});
+  const t=document.createElement('div');
+  t.textContent='DRAFT';
+  Object.assign(t.style,{fontSize:'180px',fontWeight:'700',color:'rgba(0,0,0,0.06)',transform:'rotate(-30deg)',letterSpacing:'0.1em',fontFamily:"'DM Sans',sans-serif"});
+  d.appendChild(t);s.appendChild(d);
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 1 — COVER
+// ══════════════════════════════════════════════════════
+function buildSlide1(d){
+  const s=slide(C.cream);
+  const g=d.gapmaps_5min,r=d.ratio_funnel,si=d.site;
+  const addr=si?.address||'';
+  const parts=addr.split(',');
+  const streetLine=parts[0]||addr;
+  const suburbLine=(parts[1]||'').trim();
+  const adjRatio=r?.step6_post_entry||r?.step1_raw||0;
+  const rawRatio=r?.step1_raw||0;
+
+  // Left green panel
+  const lp=el('div',{position:'absolute',left:'0',top:'0',width:'537px',height:'720px',background:C.green});
+  s.appendChild(lp);
+  // Dark edge
+  s.appendChild(el('div',{position:'absolute',left:'537px',top:'0',width:'8px',height:'720px',background:C.greenDk}));
+  // Bottom terra bar
+  s.appendChild(el('div',{position:'absolute',left:'545px',top:'635px',width:'735px',height:'85px',background:C.terra}));
+
+  // Left text
+  lp.appendChild(txt('SITE FEASIBILITY ANALYSIS',{position:'absolute',left:'42px',top:'72px',fontSize:'11px',fontWeight:'600',color:'#C8E6D4',letterSpacing:'0.2em',fontFamily:"'DM Sans',sans-serif"}));
+  lp.appendChild(txt(streetLine,{position:'absolute',left:'42px',top:'120px',width:'450px',fontSize:'42px',fontWeight:'600',color:C.white,lineHeight:'1.1',fontFamily:"'DM Sans',sans-serif"}));
+  lp.appendChild(txt(suburbLine,{position:'absolute',left:'42px',top:'230px',width:'450px',fontSize:'18px',color:'#C8E6D4',fontFamily:"'DM Sans',sans-serif"}));
+  lp.appendChild(txt('Proposed Use: Child Care Centre',{position:'absolute',left:'42px',top:'290px',fontSize:'12px',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+  lp.appendChild(txt((si?.report_date||'April 2026')+' | 12-Slide Report',{position:'absolute',left:'42px',top:'318px',fontSize:'11px',color:'#C8E6D4',fontFamily:"'DM Sans',sans-serif"}));
+  lp.appendChild(txt('Demand · Demographics · Participation / CALD · Competition · Pipeline · Verdict',{position:'absolute',left:'42px',top:'630px',width:'450px',fontSize:'10px',color:'#C8E6D4',lineHeight:'1.5',fontFamily:"'DM Sans',sans-serif"}));
+
+  // Right demand signal card
+  const rc=el('div',{position:'absolute',left:'595px',top:'55px',width:'645px',height:'555px',background:C.white,borderRadius:'8px',border:'1px solid '+C.border,boxShadow:'0 2px 8px rgba(0,0,0,0.08)'});
+  rc.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'100%',height:'6px',background:C.green,borderRadius:'8px 8px 0 0'}));
+  rc.appendChild(txt('DEMAND SIGNAL',{position:'absolute',left:'28px',top:'30px',fontSize:'11px',fontWeight:'600',color:C.terra,letterSpacing:'0.15em',fontFamily:"'DM Sans',sans-serif"}));
+  // Divider
+  rc.appendChild(el('div',{position:'absolute',left:'28px',top:'58px',width:'589px',height:'1px',background:C.border}));
+  // Big ratio
+  rc.appendChild(txt(adjRatio.toFixed(2)+'x',{position:'absolute',left:'28px',top:'68px',fontSize:'72px',fontWeight:'600',color:C.terra,fontFamily:"'DM Sans',sans-serif"}));
+  rc.appendChild(txt('children per licensed place (adjusted)\n5-minute drive time catchment',{position:'absolute',left:'28px',top:'180px',width:'589px',fontSize:'14px',color:C.muted,lineHeight:'1.5',fontFamily:"'DM Sans',sans-serif",whiteSpace:'pre-line'}));
+  rc.appendChild(el('div',{position:'absolute',left:'28px',top:'240px',width:'589px',height:'1px',background:C.border}));
+  // Three metrics
+  const metrics=[
+    ['vs 2.42x','VIC benchmark',C.red],
+    [rawRatio.toFixed(2)+'x','raw ratio',C.muted],
+    [(g?.ldc_places||0)+'','licensed places',C.terra],
+  ];
+  metrics.forEach(([v,l,c],i)=>{
+    const x=28+i*205;
+    rc.appendChild(txt(v,{position:'absolute',left:x+'px',top:'260px',fontSize:'22px',fontWeight:'600',color:c,fontFamily:"'DM Sans',sans-serif"}));
+    rc.appendChild(txt(l,{position:'absolute',left:x+'px',top:'294px',fontSize:'10px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+  });
+  rc.appendChild(el('div',{position:'absolute',left:'28px',top:'335px',width:'589px',height:'1px',background:C.border}));
+  // Demand signal badge
+  const sig=r?.demand_signal||'MODERATE';
+  const sigC=demandColor(sig);
+  const sigBox=el('div',{position:'absolute',left:'28px',top:'358px',padding:'6px 16px',background:sigC,borderRadius:'4px',display:'inline-block'});
+  sigBox.appendChild(txt(sig+' DEMAND',{fontSize:'11px',fontWeight:'600',color:C.white,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  rc.appendChild(sigBox);
+  rc.appendChild(txt('Prepared for Explorers Early Learning  ·  Confidential',{position:'absolute',left:'28px',top:'420px',fontSize:'11px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+  rc.appendChild(txt('explorers.com.au',{position:'absolute',right:'24px',bottom:'20px',fontSize:'12px',color:'#C8E6D4',fontFamily:"'DM Sans',sans-serif"}));
+  s.appendChild(rc);
+  if(d.is_draft)draftWatermark(s);
+  return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 2 — SITE DETAILS
+// ══════════════════════════════════════════════════════
+function buildSlide2(d){
+  const s=slide();hdr(s,'SITE DETAILS',d.site?.address);
+  const si=d.site||{};const t=d.text||{};
+
+  // Left card
+  const lc=card(s,25,70,575,620,C.green);
+  const r=d.ratio_funnel||{};
+  const rawRatio=r.step1_raw?r.step1_raw.toFixed(2)+'x':'TBC';
+  const effRatio=r.step6_post_entry?r.step6_post_entry.toFixed(2)+'x':'TBC';
+  const rows=[
+    ['Address',si.address||'TBC'],
+    ['Proposed Use','Child Care Centre (CC) — '+(si.proposed_places||'TBC')+' places'],
+    ['Land Zone','Refer VicPlan / Planning Report'],
+    ['LGA',si.lga||'TBC'],
+    ['Raw ratio (5-min)',rawRatio+' children per licensed place'],
+    ['Effective ratio',effRatio+' (post-entry, adj. participation & CALD)'],
+    ['Report Date',si.report_date||'April 2026'],
+  ];
+  const ratioRows=[4,5]; // indices of ratio rows
+  rows.forEach(([lbl,val],i)=>{
+    const y=100+i*70;
+    const isRatio=ratioRows.includes(i);
+    const valCol=isRatio?(r.demand_signal==='STRONG'?C.green:r.demand_signal==='CAUTION'?C.red:C.amber):C.charcoal;
+    lc.appendChild(txt(lbl,{position:'absolute',left:'20px',top:y+'px',width:'140px',fontSize:'10px',fontWeight:'600',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    lc.appendChild(txt(val,{position:'absolute',left:'165px',top:y+'px',width:'385px',fontSize:'12px',fontWeight:isRatio?'600':'400',color:valCol,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'}));
+    if(i<rows.length-1){const dl=el('div',{position:'absolute',left:'20px',top:(y+45)+'px',width:'530px',height:'1px',background:C.border});lc.appendChild(dl);}
+  });
+
+  // Right — aerial
+  const aerBox=el('div',{position:'absolute',left:'620px',top:'70px',width:'610px',height:'250px',background:'#EDF1F7',border:'1px solid '+C.border,borderRadius:'6px',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center'});
+  if(d._aerialB64){const img=document.createElement('img');img.src=d._aerialB64;img.style.cssText='width:100%;height:100%;object-fit:cover;';aerBox.appendChild(img);}
+  else{aerBox.appendChild(txt('Nearmaps aerial — attach image to display',{fontSize:'12px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));}
+  s.appendChild(aerBox);
+  s.appendChild(txt('Nearmaps aerial imagery  ·  '+(si.aerial_date||'TBC'),{position:'absolute',right:'20px',top:'325px',fontSize:'9px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+
+  // Right — observations
+  const oc=card(s,620,345,610,345,C.green);
+  oc.appendChild(txt('KEY OBSERVATIONS',{position:'absolute',left:'20px',top:'15px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  const obs=t.key_observations||['Demand signal TBC — attach GapMaps PDFs','CALD suppression assessment TBC','Catchment income and SEIFA TBC','Site adjacency and retail exposure TBC','Traffic and parking assessment TBC'];
+  obs.slice(0,5).forEach((o,i)=>{
+    const ob=el('div',{position:'absolute',left:'20px',top:(45+i*55)+'px',width:'565px'});
+    const dot=el('div',{width:'6px',height:'6px',borderRadius:'50%',background:C.green,display:'inline-block',marginRight:'8px',flexShrink:'0',marginTop:'3px'});
+    const ot=el('div',{fontSize:'10.5px',color:C.charcoal,lineHeight:'1.4',fontFamily:"'DM Sans',sans-serif"});ot.textContent=o;
+    const row=el('div',{display:'flex',alignItems:'flex-start'});row.appendChild(dot);row.appendChild(ot);
+    ob.appendChild(row);oc.appendChild(ob);
+  });
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 3 — SCHOOLS & SHOPPING
+// ══════════════════════════════════════════════════════
+function buildSlide3(d){
+  const s=slide();hdr(s,'NEARBY SCHOOLS & SHOPPING CENTRES',d.site?.address);
+  const schools=d.schools||[];const retail=d.retail||[];const t=d.text||{};
+
+  // Left — schools
+  const lc=card(s,25,70,690,620,C.green);
+  lc.appendChild(txt('NEARBY SCHOOLS',{position:'absolute',left:'20px',top:'15px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  // School table header
+  const hdrs=['School','Dist','Type','Sector','Enrolments'];
+  const cw=[240,65,80,100,90];
+  let xo=20;
+  hdrs.forEach((h,i)=>{
+    const hb=el('div',{position:'absolute',left:xo+'px',top:'42px',width:cw[i]+'px',height:'26px',background:C.navy,display:'flex',alignItems:'center',padding:'0 6px'});
+    hb.appendChild(txt(h,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    lc.appendChild(hb);xo+=cw[i];
+  });
+  schools.slice(0,8).forEach((sc,ri)=>{
+    const y=70+ri*50;
+    if(ri%2===0){const rb=el('div',{position:'absolute',left:'20px',top:y+'px',width:'650px',height:'48px',background:'#FAFAF8'});lc.appendChild(rb);}
+    const vals=[sc.name,sc.distance,sc.type,sc.sector,sc.enrolments];
+    let xo2=20;
+    vals.forEach((v,ci)=>{
+      const c=el('div',{position:'absolute',left:xo2+'px',top:(y+8)+'px',width:(cw[ci]-8)+'px',fontSize:ci===0?'11px':'10px',fontWeight:ci===0?'500':'400',color:ci===1?C.green:C.charcoal,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'});
+      c.textContent=v||'—';lc.appendChild(c);xo2+=cw[ci];
+    });
+  });
+  // Insight banner
+  const ib=el('div',{position:'absolute',left:'20px',bottom:'15px',width:'645px',padding:'8px 12px',background:C.greenLt,border:'1px solid '+C.green,borderRadius:'4px'});
+  ib.appendChild(txt(t.school_insight||'School catchment data TBC — attach GapMaps PDFs',{fontSize:'10px',color:C.greenDk,lineHeight:'1.4',fontFamily:"'DM Sans',sans-serif"}));
+  lc.appendChild(ib);
+
+  // Right — retail
+  const rc=card(s,730,70,510,620,C.sand);
+  rc.appendChild(txt('NEARBY RETAIL CENTRES',{position:'absolute',left:'20px',top:'15px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  rc.appendChild(txt('Proximity to major retail generates daily commuter traffic past the site.',{position:'absolute',left:'20px',top:'38px',width:'468px',fontSize:'10px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+  const retailColors=[C.green,C.terra,C.amber,C.navy];
+  retail.slice(0,4).forEach((r,i)=>{
+    const y=72+i*125;
+    const rc2=el('div',{position:'absolute',left:'20px',top:y+'px',width:'468px',height:'115px',background:C.white,border:'1px solid '+C.border,borderRadius:'6px',boxShadow:'0 1px 3px rgba(0,0,0,0.05)'});
+    rc2.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'6px',height:'100%',background:retailColors[i],borderRadius:'6px 0 0 6px'}));
+    // Distance pill
+    const dp=el('div',{position:'absolute',right:'10px',top:'10px',padding:'3px 10px',background:retailColors[i],borderRadius:'3px'});
+    dp.appendChild(txt(r.distance||'—',{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    rc2.appendChild(dp);
+    rc2.appendChild(txt(r.name||'TBC',{position:'absolute',left:'18px',top:'12px',width:'320px',fontSize:'13px',fontWeight:'600',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+    rc2.appendChild(txt(r.anchors||'',{position:'absolute',left:'18px',top:'38px',width:'440px',fontSize:'10px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    rc2.appendChild(txt(r.note||'',{position:'absolute',left:'18px',top:'60px',width:'440px',fontSize:'9.5px',color:C.muted,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'}));
+    rc.appendChild(rc2);
+  });
+  s.appendChild(rc);
+  s.appendChild(txt('Sources: Google Maps, school websites, GapMaps. Distances approximate by road from site.',{position:'absolute',left:'25px',bottom:'8px',fontSize:'8px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 4 — DEMAND ANALYSIS
+// ══════════════════════════════════════════════════════
+function buildSlide4(d){
+  const s=slide();hdr(s,'DEMAND ANALYSIS — PLACE-TO-CHILD RATIO',d.site?.address);
+  const g=d.gapmaps_5min||{},g10=d.gapmaps_10min||{},r=d.ratio_funnel||{};
+
+  // 4 KPIs
+  kpi(s,25,72,285,155,g.ratio?.toFixed(2)+'x','Children per Place\n5-min Catchment',C.green);
+  kpi(s,325,72,285,155,(g.children_0_5||0).toLocaleString(),'Children 0-5 yrs\n5-min Catchment',C.green);
+  kpi(s,625,72,285,155,(g.ldc_places||0).toLocaleString(),'Licensed Places\n5-min Catchment',C.navy);
+  kpi(s,925,72,285,155,(g.ldc_centres||0)+' ctrs','LDC Centres\n5-min Catchment',C.amber);
+
+  // Comparison table
+  const tc=card(s,25,242,1210,420);
+  tc.appendChild(txt('CATCHMENT COMPARISON',{position:'absolute',left:'20px',top:'15px',fontSize:'11px',fontWeight:'600',color:C.muted,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  // Demand badge
+  const sig=r.demand_signal||'MODERATE';
+  const sigC=demandColor(sig);
+  const badge=el('div',{position:'absolute',right:'15px',top:'10px',padding:'5px 14px',background:sigC,borderRadius:'4px'});
+  badge.appendChild(txt(sig+' DEMAND',{fontSize:'10px',fontWeight:'600',color:C.white,letterSpacing:'0.06em',fontFamily:"'DM Sans',sans-serif"}));
+  tc.appendChild(badge);
+
+  const cols=['Metric','5-min Catchment','10-min Catchment','Victoria','Australia'];
+  const cw=[280,200,220,200,180];
+  const rows=[
+    ['Children 0-5 (2024)',(g.children_0_5||0).toLocaleString(),(g10.children_0_5||0).toLocaleString(),'485,364','1,901,556'],
+    ['LDC Places',(g.ldc_places||0).toLocaleString(),(g10.ldc_places||0).toLocaleString(),'200,209','733,789'],
+    ['Ratio (0-5 / Places)',(g.ratio||0).toFixed(2)+(g.ratio>2.42?' ✓':''),(g10.ratio||0).toFixed(2)+(g10.ratio>2.42?' ✓':''),'2.42','2.59'],
+    ['No. of Centres',(g.ldc_centres||0).toString(),(g10.ldc_centres||0).toString(),'2,142','9,670'],
+    ['Workers / Places',(g.workers_per_place||0).toFixed(2),(g10.workers_per_place||0).toFixed(2),'14.82','15.41'],
+    ['Avg Daily Fee (2-3yr)','$'+(g.fee_24_35mo||0).toFixed(2),'$'+(g10.fee_24_35mo||0).toFixed(2),'$159.27','$153.27'],
+  ];
+  // Draw header
+  let xo=15;
+  cols.forEach((h,i)=>{
+    const hb=el('div',{position:'absolute',left:xo+'px',top:'45px',width:cw[i]+'px',height:'28px',background:C.navy,display:'flex',alignItems:'center',padding:'0 8px'});
+    hb.appendChild(txt(h,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    tc.appendChild(hb);xo+=cw[i];
+  });
+  rows.forEach((row,ri)=>{
+    const y=75+ri*52;
+    const rb=el('div',{position:'absolute',left:'15px',top:y+'px',width:'1180px',height:'50px',background:ri%2===0?'#FAFAF8':C.white});
+    tc.appendChild(rb);
+    let xo2=15;
+    row.forEach((v,ci)=>{
+      const isHi=ci===1||ci===2;
+      if(isHi){const hl=el('div',{position:'absolute',left:xo2+'px',top:y+'px',width:cw[ci]+'px',height:'50px',background:C.greenLt});tc.appendChild(hl);}
+      const cv=el('div',{position:'absolute',left:(xo2+8)+'px',top:(y+10)+'px',width:(cw[ci]-16)+'px',fontSize:'12px',color:v.includes('✓')?C.green:C.charcoal,fontFamily:"'DM Sans',sans-serif"});
+      cv.textContent=v;tc.appendChild(cv);xo2+=cw[ci];
+    });
+  });
+  s.appendChild(txt('Source: GapMaps Catchment Report April 2026, ACECQA April 2026',{position:'absolute',left:'25px',bottom:'8px',fontSize:'8px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 5 — DEMOGRAPHICS
+// ══════════════════════════════════════════════════════
+function buildSlide5(d){
+  const s=slide();hdr(s,'DEMOGRAPHICS SNAPSHOT — 5-MIN CATCHMENT',d.site?.address);
+  const g=d.gapmaps_5min||{},g10=d.gapmaps_10min||{};
+
+  // 4 KPIs
+  kpi(s,25,72,280,135,(g.population_2024||0).toLocaleString(),'Population (2024)',C.navy);
+  kpi(s,320,72,280,135,'$'+(g.avg_hh_income||0).toLocaleString(),'Avg Household Income',C.green);
+  kpi(s,615,72,280,135,(g.seifa||0).toFixed(2),'SEIFA Score\n(Advantaged)',C.green);
+  kpi(s,910,72,280,135,(g.aus_born_pct||0).toFixed(1)+'%','Australian-Born\nResidents',C.amber);
+
+  // Left — CALD
+  const lc=card(s,25,222,580,468,C.green);
+  lc.appendChild(txt('DEMAND SUPPRESSION CHECK — CALD',{position:'absolute',left:'20px',top:'15px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+  const suppLevel=d.ratio_funnel?.cald_suppression_level||'LOW';
+  const isHigh=suppLevel==='HIGH';
+  lc.appendChild(txt(isHigh?'S/Central Asian and South East Asian populations above Greater Melbourne average — HIGH suppression risk.':'Low CALD suppression risk — populations within Melbourne benchmark.',{position:'absolute',left:'20px',top:'38px',width:'540px',fontSize:'10px',color:C.muted,fontStyle:'italic',lineHeight:'1.4',fontFamily:"'DM Sans',sans-serif"}));
+
+  // CALD table
+  const bpHdrs=['Birthplace','5-min','10-min','VIC','Risk'];
+  const bpCW=[190,70,70,70,90];
+  let bx=20;
+  bpHdrs.forEach((h,i)=>{
+    const hb=el('div',{position:'absolute',left:bx+'px',top:'88px',width:bpCW[i]+'px',height:'24px',background:C.navy,display:'flex',alignItems:'center',padding:'0 6px'});
+    hb.appendChild(txt(h,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    lc.appendChild(hb);bx+=bpCW[i];
+  });
+  const bpRows=[
+    ['Australia',(g.aus_born_pct||0).toFixed(1)+'%',(g10.aus_born_pct||0).toFixed(1)+'%','69.63%','Low'],
+    ['South & Central Asia',(g.sc_asia_pct||0).toFixed(1)+'%',(g10.sc_asia_pct||0).toFixed(1)+'%','6.69%',(g.sc_asia_pct||0)>10?'HIGH X':'Low'],
+    ['South East Asia',(g.se_asia_pct||0).toFixed(1)+'%',(g10.se_asia_pct||0).toFixed(1)+'%','4.90%',(g.se_asia_pct||0)>8?'HIGH X':'Low'],
+    ['North East Asia',(g.ne_asia_pct||0).toFixed(1)+'%',(g10.ne_asia_pct||0).toFixed(1)+'%','3.64%','Watch'],
+    ['UK / Ireland',(g.uk_ireland_pct||0).toFixed(1)+'%','','3.53%','Low'],
+  ];
+  bpRows.forEach((row,ri)=>{
+    const y=114+ri*44;
+    if(ri%2===0){lc.appendChild(el('div',{position:'absolute',left:'20px',top:y+'px',width:'540px',height:'42px',background:'#FAFAF8'}));}
+    let bx2=20;
+    row.forEach((v,ci)=>{
+      const riskColor=v==='HIGH X'?C.red:v==='Watch'?C.amber:C.charcoal;
+      const cv=el('div',{position:'absolute',left:(bx2+4)+'px',top:(y+8)+'px',width:(bpCW[ci]-8)+'px',fontSize:'10.5px',fontWeight:ci===4&&v!=='Low'?'600':'400',color:ci===4?riskColor:C.charcoal,fontFamily:"'DM Sans',sans-serif"});
+      cv.textContent=v;lc.appendChild(cv);bx2+=bpCW[ci];
+    });
+  });
+  // Summary banner
+  const sb=el('div',{position:'absolute',left:'20px',bottom:'15px',width:'540px',padding:'8px 12px',background:isHigh?'#FDE8E8':C.greenLt,border:'1px solid '+(isHigh?C.red:C.green),borderRadius:'4px'});
+  sb.appendChild(txt(isHigh?'HIGH suppression risk — S/C Asian and SE Asian both above Melbourne average':'Low suppression risk — CALD populations within Melbourne benchmarks',{fontSize:'10px',fontWeight:'600',color:isHigh?C.red:C.greenDk,fontFamily:"'DM Sans',sans-serif"}));
+  lc.appendChild(sb);
+
+  // Right — income
+  const rc=card(s,625,222,605,468,C.green);
+  rc.appendChild(txt('INCOME & HOUSING PROFILE',{position:'absolute',left:'20px',top:'15px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+  // Table header
+  const incHdrs=['Metric','5-min','VIC','vs VIC'];const incCW=[210,110,110,110];
+  let ix=20;
+  incHdrs.forEach((h,i)=>{
+    const hb=el('div',{position:'absolute',left:ix+'px',top:'42px',width:incCW[i]+'px',height:'24px',background:C.navy,display:'flex',alignItems:'center',padding:'0 6px'});
+    hb.appendChild(txt(h,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    rc.appendChild(hb);ix+=incCW[i];
+  });
+  const incRows=[
+    ['Avg Income / Capita','$'+(g.avg_income_capita||0).toLocaleString(),'$55,000',pctDiff(g.avg_income_capita,55000)],
+    ['Avg Income / HH','$'+(g.avg_hh_income||0).toLocaleString(),'$105,893',pctDiff(g.avg_hh_income,105893)],
+    ['Home Ownership',(g.own_pct||0).toFixed(1)+'%','32.71%',pctDiff(g.own_pct,32.71,true)],
+    ['Mortgage % of HH',(g.mortgage_pct||0).toFixed(1)+'%','36.70%',pctDiff(g.mortgage_pct,36.70,true)],
+    ['Avg Mortgage / mth','$'+(g.avg_mortgage_mth||0).toLocaleString(),'$2,045',pctDiff(g.avg_mortgage_mth,2045)],
+    ['Avg Weekly Rent','$'+(g.avg_weekly_rent||0),'$393',pctDiff(g.avg_weekly_rent,393)],
+    ['Avg HH Size',(g.avg_hh_size||0).toFixed(2),'2.54',pctDiff(g.avg_hh_size,2.54,true)],
+    ['Motor Vehicles/HH',(g.motor_vehicles_hh||0).toFixed(2),'1.75',pctDiff(g.motor_vehicles_hh,1.75,true)],
+  ];
+  incRows.forEach((row,ri)=>{
+    const y=68+ri*47;
+    let ix2=20;
+    row.forEach((v,ci)=>{
+      const isPos=ci===3&&v.startsWith('+');const isNeg=ci===3&&v.startsWith('-');
+      const cv=el('div',{position:'absolute',left:(ix2+4)+'px',top:(y+6)+'px',width:(incCW[ci]-8)+'px',fontSize:'11px',fontWeight:ci===3?'600':'400',color:isPos?C.green:isNeg?C.red:C.charcoal,fontFamily:"'DM Sans',sans-serif"});
+      cv.textContent=v;rc.appendChild(cv);ix2+=incCW[ci];
+    });
+    if(ri<incRows.length-1){rc.appendChild(el('div',{position:'absolute',left:'20px',top:(y+42)+'px',width:'560px',height:'1px',background:C.border}));}
+  });
+  if(d.is_draft)draftWatermark(s);return s;
+}
+function pctDiff(val,base,isRaw=false){
+  if(!val||!base)return'—';
+  const diff=((val-base)/base*100);
+  return(diff>=0?'+':'')+diff.toFixed(1)+'%';
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 6 — PARTICIPATION & EFFECTIVE DEMAND
+// ══════════════════════════════════════════════════════
+function buildSlide6(d){
+  const s=slide();hdr(s,'PARTICIPATION RATE & EFFECTIVE DEMAND ADJUSTMENT',d.site?.address);
+  const r=d.ratio_funnel||{},g=d.gapmaps_5min||{},si=d.site||{};
+
+  // Intro strip
+  const intro=el('div',{position:'absolute',left:'25px',top:'72px',width:'1210px',height:'58px',background:C.terraLt||'#F5E8E4',border:'1px solid '+C.terra,borderRadius:'4px',display:'flex',alignItems:'center',padding:'0 16px 0 20px'});
+  intro.appendChild(el('div',{width:'5px',height:'58px',background:C.terra,marginRight:'14px',flexShrink:'0',borderRadius:'2px'}));
+  intro.appendChild(txt('A raw place-to-child ratio overstates demand. This analysis applies four evidence-based adjustments — participation rate (relative to Greater Melbourne), CALD suppression (relative to Melbourne baseline), pipeline childcare supply (including the proposed Explorers centre), and housing demand — to produce a forward effective demand estimate. The proposed Explorers centre is included in Step 4 supply alongside other pipeline permits.',{fontSize:'11px',color:C.terraDk,lineHeight:'1.5',fontFamily:"'DM Sans',sans-serif"}));
+  s.appendChild(intro);
+
+  // 6 step cards
+  const steps=[
+    {title:'Step 1\nRaw ratio',val:(r.step1_raw||0).toFixed(2)+'x',sub:(g.children_0_5||0)+' / '+(g.ldc_places||0),note:'GapMaps baseline',color:C.charcoal},
+    {title:'Step 2\nParticipation',val:(r.step2_participation||0).toFixed(2)+'x',sub:'Factor: '+(r.participation_factor||0).toFixed(3),note:'Relative to Melbourne 76.4%',color:C.terra},
+    {title:'Step 3\nCALD adj.',val:(r.step3_cald||0).toFixed(2)+'x',sub:'Factor: '+(r.cald_factor||0).toFixed(3),note:'Relative to Melbourne baseline 11.59%',color:C.sand},
+    {title:'Step 4\nPipeline + Explorers',val:(r.step4_pipeline_childcare||0).toFixed(2)+'x',sub:'Incl. all new supply',note:'Pipeline permits + proposed '+((d.site?.proposed_places||0))+' Explorers places',color:C.amber},
+    {title:'Step 5\nHousing pipeline',val:(r.step5_housing_or_same||0).toFixed(2)+'x',sub:d.housing_pipeline?.applies?'+'+d.housing_pipeline?.new_children+' children':'N/A — established',note:d.housing_pipeline?.applies?d.housing_pipeline?.new_lots+' new lots':'Established suburb',color:C.blue},
+    {title:'Step 6\nEffective ratio',val:(r.step6_post_entry||0).toFixed(2)+'x',sub:'Final adjusted ratio',note:'Used on cover & verdict',color:C.green},
+  ];
+  const cardW=193,cardX=25;
+  steps.forEach((st,i)=>{
+    const x=cardX+i*(cardW+8);
+    const c=el('div',{position:'absolute',left:x+'px',top:'150px',width:cardW+'px',height:'260px',background:C.white,border:i===5?'2px solid '+C.green:'1px solid '+C.border,borderRadius:'6px',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'});
+    c.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'6px',height:'100%',background:st.color,borderRadius:'6px 0 0 6px'}));
+    // Title
+    const titleEl=el('div',{position:'absolute',left:'14px',top:'12px',width:(cardW-20)+'px',fontSize:'9px',fontWeight:'600',color:C.muted,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3',whiteSpace:'pre-line'});
+    titleEl.textContent=st.title;c.appendChild(titleEl);
+    // Value
+    c.appendChild(txt(st.val,{position:'absolute',left:'14px',top:'58px',fontSize:'32px',fontWeight:'600',color:st.color,fontFamily:"'DM Sans',sans-serif"}));
+    c.appendChild(el('div',{position:'absolute',left:'14px',top:'108px',width:(cardW-28)+'px',height:'1px',background:C.border}));
+    c.appendChild(txt(st.sub,{position:'absolute',left:'14px',top:'118px',width:(cardW-28)+'px',fontSize:'9.5px',fontWeight:'500',color:C.charcoal,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'}));
+    c.appendChild(txt(st.note,{position:'absolute',left:'14px',top:'148px',width:(cardW-28)+'px',fontSize:'9px',color:C.muted,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'}));
+    s.appendChild(c);
+    // Arrow
+    if(i<5){const arr=el('div',{position:'absolute',left:(x+cardW+1)+'px',top:'262px',fontSize:'16px',color:C.muted,fontFamily:"'DM Sans',sans-serif"});arr.textContent='→';s.appendChild(arr);}
+  });
+
+  // Participation context table
+  const ptc=card(s,25,430,1210,258);
+  ptc.appendChild(txt('FEMALE WORKFORCE PARTICIPATION — CONTEXT',{position:'absolute',left:'20px',top:'14px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+  const ptHdrs=['Location','Participation Rate','Notes'];const ptCW=[250,150,750];
+  let px=20;
+  ptHdrs.forEach((h,i)=>{
+    const hb=el('div',{position:'absolute',left:px+'px',top:'40px',width:ptCW[i]+'px',height:'24px',background:C.navy,display:'flex',alignItems:'center',padding:'0 8px'});
+    hb.appendChild(txt(h,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    ptc.appendChild(hb);px+=ptCW[i];
+  });
+  const ptRows=[
+    [si.lga||'Site catchment (est.)','~'+(Math.round((r.participation_factor||0.96)*76.4*10)/10)+'%','Estimated from demographics and SEIFA profile'],
+    ['Greater Melbourne','76.4%','ABS Labour Force Survey — benchmark used in adjustment'],
+    ['Victoria Overall','62.4%','ABS Labour Force Survey'],
+    ['National','63.0%','ABS Labour Force Survey'],
+  ];
+  ptRows.forEach((row,ri)=>{
+    const y=66+ri*42;
+    let px2=20;
+    row.forEach((v,ci)=>{
+      const cv=el('div',{position:'absolute',left:(px2+6)+'px',top:(y+6)+'px',width:(ptCW[ci]-12)+'px',fontSize:'10.5px',fontWeight:ci===1?'600':'400',color:ci===1?C.green:C.charcoal,fontFamily:"'DM Sans',sans-serif"});
+      cv.textContent=v;ptc.appendChild(cv);px2+=ptCW[ci];
+    });
+    if(ri<ptRows.length-1)ptc.appendChild(el('div',{position:'absolute',left:'20px',top:(y+38)+'px',width:'1170px',height:'1px',background:C.border}));
+  });
+  s.appendChild(txt('Note: CALD factor formula: 1 - ((site_suppressed% - Melbourne_baseline 11.59%) x 0.005). Participation factor: site_est / 76.4 (Greater Melbourne benchmark). Both factors capped between 0.70 and 1.00.',{position:'absolute',left:'25px',bottom:'8px',fontSize:'8px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 7 — COMPETITORS (paginated)
+// ══════════════════════════════════════════════════════
+function buildSlide7(d){
+  const comps=d.competitors||[];
+  const slides=[];
+  const totalPlaces=comps.reduce((s,c)=>s+(c.places||0),0);
+  const vacCount=comps.filter(c=>(c.vacancies||'').toLowerCase().includes('yes')||c.vacancies==='Yes').length;
+  const avgFee=d.gapmaps_5min?.fee_24_35mo||0;
+
+  for(let page=0;page*4<Math.max(comps.length,1);page++){
+    const pageComps=comps.slice(page*4,(page+1)*4);
+    const s=slide();
+    hdr(s,'COMPETITOR CHILDCARE CENTRES — 5-MIN CATCHMENT'+(page>0?' (CONT.)':''),d.site?.address);
+
+    // Summary bar
+    const sb=el('div',{position:'absolute',left:'25px',top:'72px',width:'1210px',height:'62px',background:C.terra,borderRadius:'4px'});
+    [[comps.length,'LDC Centres'],[totalPlaces,'Total Licensed Places'],['~$'+avgFee.toFixed(0)+'/day','Avg Fee (GapMaps)'],[vacCount+' of '+comps.length,'Have Vacancies']].forEach(([v,l],i)=>{
+      const x=45+i*295;
+      sb.appendChild(txt(String(v),{position:'absolute',left:x+'px',top:'8px',fontSize:'20px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+      sb.appendChild(txt(l,{position:'absolute',left:x+'px',top:'36px',fontSize:'10px',color:'#F5C4B3',fontFamily:"'DM Sans',sans-serif"}));
+    });
+    s.appendChild(sb);
+
+    // 4 centre cards 2x2
+    pageComps.forEach((c,i)=>{
+      const col=i%2,row=Math.floor(i/2);
+      const x=25+col*615,y=150+row*248;
+      const nc=el('div',{position:'absolute',left:x+'px',top:y+'px',width:'590px',height:'232px',background:C.white,border:'1px solid '+C.border,borderRadius:'6px',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'});
+      const nqsC=nqsColor(c.nqs);
+      nc.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'6px',height:'100%',background:nqsC,borderRadius:'6px 0 0 6px'}));
+
+      // Photo if available
+      if(c.photo){
+        const pi=el('div',{position:'absolute',left:'16px',top:'12px',width:'90px',height:'90px',borderRadius:'4px',overflow:'hidden'});
+        const img=document.createElement('img');img.src=c.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;';
+        pi.appendChild(img);nc.appendChild(pi);
+        nc.appendChild(txt(c.name,{position:'absolute',left:'118px',top:'12px',width:'456px',fontSize:'13px',fontWeight:'600',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(txt(c.address,{position:'absolute',left:'118px',top:'34px',width:'456px',fontSize:'10px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+      }else{
+        nc.appendChild(txt(c.name,{position:'absolute',left:'18px',top:'12px',width:'556px',fontSize:'13px',fontWeight:'600',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(txt(c.address,{position:'absolute',left:'18px',top:'34px',width:'556px',fontSize:'10px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+      }
+      nc.appendChild(el('div',{position:'absolute',left:'16px',top:'58px',width:'558px',height:'1px',background:C.border}));
+
+      // Data fields
+      // If verified fee from call, highlight it
+      const feeDisplay = c.ms_verified && c.fee && !c.fee.includes('confirm') ? c.fee + ' ✓' : (c.fee||'Call to confirm');
+      [['Places',(c.places||'—').toString()],['Fee/day',feeDisplay],['Hours',c.hours||'—']].forEach(([l,v],fi)=>{
+        const fx=16+fi*182;
+        nc.appendChild(txt(l,{position:'absolute',left:fx+'px',top:'68px',fontSize:'9px',fontWeight:'600',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(txt(v,{position:'absolute',left:fx+'px',top:'84px',width:'175px',fontSize:'11px',fontWeight:'600',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+      });
+
+      // Badges
+      const nqsBadge=el('div',{position:'absolute',left:'16px',top:'118px',padding:'3px 10px',background:nqsC,borderRadius:'3px'});
+      nqsBadge.appendChild(txt((c.nqs||'Not rated')+(c.nqs_date?' ('+c.nqs_date+')':''),{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+      nc.appendChild(nqsBadge);
+
+      const vacText=c.vacancies||'—';
+      const vacC=vacText.toLowerCase().includes('yes')?C.green:vacText.toLowerCase().includes('no')?C.red:C.muted;
+      const vacBadge=el('div',{position:'absolute',left:'230px',top:'118px',padding:'3px 12px',background:vacC==='#3A6B4A'?C.greenLt2:vacC===C.red?C.redLt:C.amberLt,border:'1px solid '+vacC,borderRadius:'3px'});
+      vacBadge.appendChild(txt(vacText,{fontSize:'9px',fontWeight:'600',color:vacC,fontFamily:"'DM Sans',sans-serif"}));
+      nc.appendChild(vacBadge);
+
+      // Verified badge if mystery shopper data present
+      if(c.ms_verified){
+        const vb=el('div',{position:'absolute',right:'10px',top:'118px',padding:'3px 8px',background:'#1a3a6b',borderRadius:'3px'});
+        vb.appendChild(txt('Verified',{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(vb);
+      }
+
+      // Note row — if ms_verified show occupancy data, else show original note
+      let noteText = c.note||'';
+      if(c.ms_verified){
+        const parts=[];
+        if(c.verified_occupancy_label) parts.push('Centre occupancy: '+c.verified_occupancy_label);
+        if(c.infant_room_occ) parts.push('Infant room: '+c.infant_room_occ);
+        if(c.kinder_room_occ) parts.push('Kinder room: '+c.kinder_room_occ);
+        if(c.vacancies_detail) parts.push(c.vacancies_detail);
+        if(c.ms_spoke_to) parts.push('Spoke to: '+c.ms_spoke_to);
+        noteText = parts.join(' · ');
+      }
+      nc.appendChild(txt(noteText,{position:'absolute',left:'16px',top:'148px',width:'558px',fontSize:'9.5px',color:c.ms_verified?'#1a3a6b':C.muted,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.3'}));
+      s.appendChild(nc);
+    });
+
+    // Fill empty slots
+    while(pageComps.length<4){
+      const i=pageComps.length;
+      const col=i%2,row=Math.floor(i/2);
+      pageComps.push({});
+    }
+
+    s.appendChild(txt('Source: StartingBlocks.gov.au (ACECQA) — fees & NQS as at April 2026. Vacancies as reported on StartingBlocks.',{position:'absolute',left:'25px',bottom:'8px',fontSize:'8px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+    if(d.is_draft)draftWatermark(s);
+    slides.push(s);
+  }
+  return slides;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 8 — EXTENDED CATCHMENT & FEE BENCHMARK
+// ══════════════════════════════════════════════════════
+function buildSlide8(d){
+  const s=slide();hdr(s,'EXTENDED CATCHMENT & FEE BENCHMARK — 10-MIN DRIVE TIME',d.site?.address);
+  const g10=d.gapmaps_10min||{},comps10=d.competitors_10min||[],comps=d.competitors||[];
+
+  // Left — extended table
+  const lc=card(s,25,70,690,600,null);
+  lc.appendChild(txt('ALL LDC CENTRES — 10-MIN CATCHMENT',{position:'absolute',left:'18px',top:'14px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+  lc.appendChild(txt((g10.ldc_centres||0)+' centres  ·  '+(g10.ldc_places||0)+' places  ·  Ratio '+(g10.ratio||0).toFixed(2)+'x',{position:'absolute',left:'18px',top:'34px',fontSize:'10px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+
+  // Merge 5-min and 10-min competitors
+  const allComps=[...comps,...comps10.filter(c=>!comps.find(x=>x.name===c.name))];
+  const tblRows=allComps.slice(0,9).map(c=>[c.name,c.distance||c.address?.split(',')[0]||'—',(c.places||'—').toString(),c.fee||'—',c.nqs?.includes('Exceed')?'Exceed.':c.nqs?.includes('Working')?'Working':c.nqs?.includes('Meeting')?'Meeting':'—',c.vacancies||'—']);
+  tblRows.push(['+ '+Math.max(0,(g10.ldc_centres||0)-tblRows.length)+' further centres','—','—','—','—','—']);
+  tbl(s,43,60,645,['Centre','Dist','Places','Fee','NQS','Vac'],[...tblRows],
+    [220,55,58,65,72,60]);
+
+  // Market signal
+  const ms=el('div',{position:'absolute',left:'43px',top:'568px',width:'645px',padding:'7px 10px',background:C.greenLt2,border:'1px solid '+C.green,borderRadius:'4px'});
+  ms.appendChild(txt(d.text?.market_signal||'Market signal: review competitor vacancy and quality data for full picture.',{fontSize:'9.5px',color:C.greenDk,fontFamily:"'DM Sans',sans-serif"}));
+  lc.appendChild(ms);
+
+  // Right — fee benchmark chart
+  const rc=card(s,735,70,510,430,C.terra);
+  rc.appendChild(txt('FEE BENCHMARK — 5-MIN CENTRES',{position:'absolute',left:'18px',top:'14px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+
+  const feeData=comps.filter(c=>c.fee&&c.fee!=='Call to confirm'&&c.fee!=='—').map(c=>({name:c.name.length>18?c.name.slice(0,18)+'...':c.name,fee:parseFloat(c.fee.replace('$',''))||0}));
+  feeData.push({name:'VIC Average',fee:159.27});
+  const maxFee=220,barAreaW=250,nameW=160,labelX=425;
+  feeData.slice(0,6).forEach((f,i)=>{
+    const y=50+i*52;
+    rc.appendChild(txt(f.name,{position:'absolute',left:'18px',top:y+'px',width:nameW+'px',fontSize:'10px',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+    const barW=Math.round((f.fee/maxFee)*barAreaW);
+    const bar=el('div',{position:'absolute',left:(18+nameW+5)+'px',top:(y+5)+'px',width:barW+'px',height:'20px',background:f.name==='VIC Average'?C.muted:C.green,borderRadius:'2px'});
+    rc.appendChild(bar);
+    rc.appendChild(txt('$'+f.fee.toFixed(0),{position:'absolute',left:labelX+'px',top:y+'px',fontSize:'10px',fontWeight:'600',color:f.name==='VIC Average'?C.muted:C.green,fontFamily:"'DM Sans',sans-serif"}));
+  });
+  // Target line at $188
+  const tx=18+nameW+5+Math.round((188/maxFee)*barAreaW);
+  rc.appendChild(el('div',{position:'absolute',left:tx+'px',top:'45px',width:'1px',height:Math.min(feeData.length,6)*52+'px',background:C.terraDk,borderStyle:'dashed',borderWidth:'0 0 0 1px',borderColor:C.terraDk}));
+  rc.appendChild(txt('Target\n$188',{position:'absolute',left:(tx-35)+'px',top:'30px',fontSize:'9px',color:C.terraDk,fontWeight:'600',textAlign:'right',fontFamily:"'DM Sans',sans-serif",whiteSpace:'pre-line'}));
+  s.appendChild(rc);
+
+  s.appendChild(txt('Average local fee $'+(d.gapmaps_5min?.fee_24_35mo||'—')+'/day (GapMaps 5-min). Explorers target benchmark $188/day.\nFees sourced from StartingBlocks.gov.au April 2026.',{position:'absolute',left:'735px',top:'510px',width:'510px',fontSize:'9px',color:C.muted,fontStyle:'italic',lineHeight:'1.4',fontFamily:"'DM Sans',sans-serif"}));
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 9 — NEAREST EXPLORERS CENTRES
+// ══════════════════════════════════════════════════════
+function buildSlide9(d){
+  const s=slide();hdr(s,'NEARBY EXPLORERS EARLY LEARNING CENTRES',d.site?.address);
+  const nearest=d.explorers_nearest||[];
+
+  // Intro strip
+  const intro=el('div',{position:'absolute',left:'25px',top:'72px',width:'1210px',height:'50px',background:C.greenLt,border:'1px solid '+C.green,borderRadius:'4px',display:'flex',alignItems:'center',padding:'0 16px'});
+  const closestName=nearest[0]?.name||'TBC';
+  intro.appendChild(txt('The proposed site would expand Explorers\' network. Nearest operating centre: Explorers '+closestName+'. Drive times calculated from site address — Wednesday 8am conditions.',{fontSize:'11px',color:C.greenDk,lineHeight:'1.4',fontFamily:"'DM Sans',sans-serif"}));
+  s.appendChild(intro);
+
+  if(!nearest.length){
+    const nb=card(s,25,140,1210,540);
+    nb.appendChild(txt('Nearest Explorers centres — TBC. Attach GapMaps PDFs to auto-calculate drive times.',{position:'absolute',left:'20px',top:'20px',fontSize:'12px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    if(d.is_draft)draftWatermark(s);return s;
+  }
+
+  // Featured — closest (left large card)
+  const fc=nearest[0];
+  const lc=el('div',{position:'absolute',left:'25px',top:'140px',width:'590px',height:'545px',background:C.white,border:'1px solid '+C.border,borderRadius:'6px',boxShadow:'0 1px 5px rgba(0,0,0,0.07)',overflow:'hidden'});
+  // Header band
+  const fhdr=el('div',{position:'absolute',left:'0',top:'0',width:'100%',height:'38px',background:C.green});
+  fhdr.appendChild(txt('CLOSEST — EXPLORERS '+(fc.name||'').toUpperCase(),{position:'absolute',left:'14px',top:'0',height:'38px',display:'flex',alignItems:'center',fontSize:'11px',fontWeight:'600',color:C.white,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  lc.appendChild(fhdr);
+
+  // Photo placeholder
+  const ph=el('div',{position:'absolute',left:'14px',top:'50px',width:'180px',height:'140px',background:'#EDF1F7',border:'1px solid '+C.border,borderRadius:'4px',display:'flex',alignItems:'center',justifyContent:'center'});
+  ph.appendChild(txt('Photo\n'+fc.address?.split(',')[0],{fontSize:'9px',color:C.muted,textAlign:'center',fontFamily:"'DM Sans',sans-serif",whiteSpace:'pre-line'}));
+  lc.appendChild(ph);
+
+  // Details
+  const details=[
+    ['Address',fc.address||'—'],
+    ['Places',(fc.places||'—')+' approved'],
+    ['Fee','$'+(fc.fee||'—')+'/day'],
+    ['Occupancy',fmtOcc(fc.occ_pct)],
+    ['Hours','6:30am – 6:30pm'],
+  ];
+  details.forEach(([l,v],i)=>{
+    const y=52+i*28;
+    lc.appendChild(txt(l,{position:'absolute',left:'205px',top:y+'px',width:'75px',fontSize:'9px',fontWeight:'600',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    lc.appendChild(txt(v,{position:'absolute',left:'283px',top:y+'px',width:'290px',fontSize:'11px',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+  });
+  lc.appendChild(el('div',{position:'absolute',left:'14px',top:'210px',width:'562px',height:'1px',background:C.border}));
+
+  // Drive time visual
+  const dtBox=el('div',{position:'absolute',left:'14px',top:'220px',width:'562px',height:'70px',background:C.greenLt,borderRadius:'4px'});
+  dtBox.appendChild(txt('DRIVE TIME',{position:'absolute',left:'12px',top:'8px',fontSize:'8px',fontWeight:'600',color:C.greenDk,letterSpacing:'0.08em',fontFamily:"'DM Sans',sans-serif"}));
+  // Journey dots
+  [d.site?.address?.split(',')[0]||'Site',fc.route||'Via major road',fc.address?.split(',')[0]||'Centre'].forEach((label,i)=>{
+    const x=30+i*190;
+    const dot=el('div',{position:'absolute',left:x+'px',top:'30px',width:'12px',height:'12px',borderRadius:'50%',background:C.green});
+    dtBox.appendChild(dot);
+    dtBox.appendChild(txt(label,{position:'absolute',left:(x-20)+'px',top:'48px',width:'70px',fontSize:'8px',color:C.charcoal,textAlign:'center',fontFamily:"'DM Sans',sans-serif"}));
+    if(i<2){dtBox.appendChild(el('div',{position:'absolute',left:(x+12)+'px',top:'36px',width:'178px',height:'1px',background:C.green}));}
+  });
+  dtBox.appendChild(txt((fc.drive_min||'—')+' min  ·  '+(fc.distance_km||'—')+' km',{position:'absolute',right:'12px',top:'8px',fontSize:'10px',fontWeight:'600',color:C.greenDk,fontFamily:"'DM Sans',sans-serif"}));
+  lc.appendChild(dtBox);
+  s.appendChild(lc);
+
+  // Two smaller cards (right column)
+  nearest.slice(1,3).forEach((c,i)=>{
+    const y=140+i*272;
+    const rc=el('div',{position:'absolute',left:'635px',top:y+'px',width:'600px',height:'257px',background:C.white,border:'1px solid '+C.border,borderRadius:'6px',boxShadow:'0 1px 4px rgba(0,0,0,0.06)',overflow:'hidden'});
+    const colors=[C.terra,C.sand];
+    const rhdr=el('div',{position:'absolute',left:'0',top:'0',width:'100%',height:'34px',background:colors[i]});
+    rhdr.appendChild(txt('EXPLORERS '+(c.name||'').toUpperCase(),{position:'absolute',left:'14px',top:'0',height:'34px',display:'flex',alignItems:'center',fontSize:'10px',fontWeight:'600',color:C.white,letterSpacing:'0.06em',fontFamily:"'DM Sans',sans-serif"}));
+    rc.appendChild(rhdr);
+    const rDetails=[['Address',c.address||'—'],['Places',(c.places||'—')+' approved'],['Fee','$'+(c.fee||'—')+'/day'],['Occupancy',fmtOcc(c.occ_pct)]];
+    rDetails.forEach(([l,v],ri)=>{
+      const ry=44+ri*38;
+      rc.appendChild(txt(l,{position:'absolute',left:'14px',top:ry+'px',width:'80px',fontSize:'9px',fontWeight:'600',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+      rc.appendChild(txt(v,{position:'absolute',left:'98px',top:ry+'px',width:'490px',fontSize:'11px',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+    });
+    // Drive time bar
+    const dtb=el('div',{position:'absolute',left:'14px',bottom:'12px',width:'572px',height:'26px',background:C.greenLt,borderRadius:'3px',display:'flex',alignItems:'center',padding:'0 10px',justifyContent:'space-between'});
+    dtb.appendChild(txt((c.drive_min||'—')+' min  ·  '+(c.distance_km||'—')+' km',{fontSize:'10px',fontWeight:'600',color:C.greenDk,fontFamily:"'DM Sans',sans-serif"}));
+    dtb.appendChild(txt(c.route||'',{fontSize:'9px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    rc.appendChild(dtb);
+    s.appendChild(rc);
+  });
+  s.appendChild(txt('Source: Explorers internal register (April 2026). Places: ACECQA. Fees and occupancy: internal data. Drive times: Google Maps Wed 8am.',{position:'absolute',left:'25px',bottom:'8px',fontSize:'8px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 10 — PIPELINE PERMITS (paginated)
+// ══════════════════════════════════════════════════════
+function buildSlide10(d){
+  const permits=d.pipeline_permits||[];
+  if(!permits.length){
+    const s=slide();hdr(s,'PIPELINE CHILDCARE PERMITS',d.site?.address);
+    const nb=card(s,25,70,1210,580);
+    nb.appendChild(txt('No pipeline permits identified for this catchment.',{position:'absolute',left:'20px',top:'20px',fontSize:'13px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    if(d.is_draft)draftWatermark(s);return[s];
+  }
+  const slides=[];
+  const totalApproved=permits.reduce((s,p)=>s+(p.approved_places||0),0);
+  const totalEffective=permits.reduce((s,p)=>s+(p.effective_places||0),0);
+  for(let page=0;page*4<permits.length;page++){
+    const pagePermits=permits.slice(page*4,(page+1)*4);
+    const s=slide();hdr(s,'PIPELINE CHILDCARE PERMITS'+(page>0?' (CONT.)':''),d.site?.address);
+    // Summary bar
+    const sb=el('div',{position:'absolute',left:'25px',top:'72px',width:'1210px',height:'62px',background:C.terra,borderRadius:'4px'});
+    [[permits.length,'Pipeline Permits'],[totalApproved,'Total Approved Places'],[totalEffective,'Effective Places (risk-adjusted)'],[totalApproved-totalEffective,'Places Discounted Out']].forEach(([v,l],i)=>{
+      const x=45+i*295;
+      sb.appendChild(txt(String(v),{position:'absolute',left:x+'px',top:'8px',fontSize:'20px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+      sb.appendChild(txt(l,{position:'absolute',left:x+'px',top:'36px',fontSize:'10px',color:'#F5C4B3',fontFamily:"'DM Sans',sans-serif"}));
+    });
+    s.appendChild(sb);
+    // 4 permit cards 2x2
+    pagePermits.forEach((p,i)=>{
+      const col=i%2,row=Math.floor(i/2);
+      const x=25+col*615,y=150+row*248;
+      const nc=el('div',{position:'absolute',left:x+'px',top:y+'px',width:'590px',height:'232px',background:C.white,border:'1px solid '+C.border,borderRadius:'6px',overflow:'hidden'});
+      // Stage stripe
+      const stageC='#'+(p.stage_colour||'EF9F27');
+      nc.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'100%',height:'6px',background:stageC}));
+      if(p.imgSrc){
+        const pi=el('div',{position:'absolute',left:'14px',top:'18px',width:'120px',height:'100px',borderRadius:'4px',overflow:'hidden'});
+        const img=document.createElement('img');img.src=p.imgSrc;img.style.cssText='width:100%;height:100%;object-fit:cover;';
+        pi.appendChild(img);nc.appendChild(pi);
+        nc.appendChild(txt(p.address||'TBC',{position:'absolute',left:'146px',top:'18px',width:'430px',fontSize:'12px',fontWeight:'600',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(txt(p.summary||'',{position:'absolute',left:'146px',top:'40px',width:'430px',fontSize:'10px',color:C.muted,lineHeight:'1.3',fontFamily:"'DM Sans',sans-serif"}));
+      }else{
+        nc.appendChild(txt(p.address||'TBC',{position:'absolute',left:'14px',top:'18px',width:'562px',fontSize:'12px',fontWeight:'600',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(txt(p.summary||'',{position:'absolute',left:'14px',top:'40px',width:'562px',fontSize:'10px',color:C.muted,lineHeight:'1.3',fontFamily:"'DM Sans',sans-serif"}));
+      }
+      // Badges
+      const by=130;
+      [[p.stage||'TBC',stageC],[`${p.approved_places||0} approved`,C.navy],[`${p.effective_places||0} effective`,C.green],[`${p.risk_discount_pct||0}% discount`,C.muted]].forEach(([txt2,bg],bi)=>{
+        const bx=14+bi*143;
+        const badge=el('div',{position:'absolute',left:bx+'px',top:by+'px',padding:'3px 8px',background:bg,borderRadius:'3px'});
+        badge.appendChild(txt(txt2,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+        nc.appendChild(badge);
+      });
+      s.appendChild(nc);
+    });
+    s.appendChild(txt('Sources: GapMaps proposed permits · Team assessment · April 2026',{position:'absolute',left:'25px',bottom:'8px',fontSize:'8px',color:C.muted,fontStyle:'italic',fontFamily:"'DM Sans',sans-serif"}));
+    if(d.is_draft)draftWatermark(s);slides.push(s);
+  }
+  return slides;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 11 — POPULATION PROJECTIONS
+// ══════════════════════════════════════════════════════
+function buildSlide11(d){
+  const s=slide();hdr(s,'POPULATION PROJECTIONS & PIPELINE RISK SUMMARY',d.site?.address);
+  const g=d.gapmaps_5min||{};
+  const proj=g.projections_0_5||[0,0,0,0,0,0,0,0,0,0,0,0,0];
+  const years=['2024','2025','2026','2027','2028','2029','2030','2031','2032','2033','2034','2035','2036'];
+
+  // Chart card
+  const cc=card(s,25,70,760,455);
+  cc.appendChild(txt('0-5 YR POPULATION PROJECTIONS — 5-MIN CATCHMENT',{position:'absolute',left:'18px',top:'14px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+
+  // Draw line chart manually
+  const chartL=40,chartT=50,chartW=700,chartH=360;
+  const validProj=proj.filter(v=>v>0);
+  const minV=validProj.length?Math.min(...validProj)*0.9:0;
+  const maxV=validProj.length?Math.max(...validProj)*1.1:100;
+  const pts=proj.map((v,i)=>{
+    const x=chartL+(i/(proj.length-1))*chartW;
+    const y=chartT+chartH-(v-minV)/(maxV-minV)*chartH;
+    return{x,y,v};
+  });
+
+  // Grid lines
+  [0,0.25,0.5,0.75,1].forEach(t=>{
+    const y=chartT+chartH*(1-t);
+    cc.appendChild(el('div',{position:'absolute',left:chartL+'px',top:y+'px',width:chartW+'px',height:'1px',background:'#EEE'}));
+    const val=Math.round(minV+(maxV-minV)*t);
+    cc.appendChild(txt(val.toLocaleString(),{position:'absolute',left:'2px',top:(y-8)+'px',fontSize:'8px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+  });
+
+  // Draw SVG line
+  if(validProj.length>0){
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('style',`position:absolute;left:${chartL}px;top:${chartT}px;width:${chartW}px;height:${chartH}px;overflow:visible;`);
+    const polyline=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    const ptStr=pts.map(p=>`${p.x-chartL},${p.y-chartT}`).join(' ');
+    polyline.setAttribute('points',ptStr);
+    polyline.setAttribute('fill','none');polyline.setAttribute('stroke',C.green);polyline.setAttribute('stroke-width','3');
+    svg.appendChild(polyline);
+    pts.forEach(p=>{
+      const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx',p.x-chartL);circle.setAttribute('cy',p.y-chartT);circle.setAttribute('r','4');
+      circle.setAttribute('fill',C.green);svg.appendChild(circle);
+    });
+    cc.appendChild(svg);
+  }
+
+  // X axis labels
+  years.forEach((yr,i)=>{
+    const x=chartL+(i/(proj.length-1))*chartW;
+    cc.appendChild(txt(yr,{position:'absolute',left:(x-15)+'px',top:(chartT+chartH+5)+'px',fontSize:'8px',color:C.muted,fontFamily:"'DM Sans',sans-serif"}));
+    // Data labels
+    if(proj[i]>0){
+      cc.appendChild(txt(proj[i].toLocaleString(),{position:'absolute',left:(x-15)+'px',top:(pts[i]?.y-20)+'px',fontSize:'8px',color:C.charcoal,fontFamily:"'DM Sans',sans-serif"}));
+    }
+  });
+
+  // Trend insights
+  const startProj=proj.find(v=>v>0)||0;
+  const endProj=proj.filter(v=>v>0).pop()||0;
+  const trend=endProj>startProj*1.05?'Growing':endProj<startProj*0.95?'Declining':'Stable';
+  const trendC=trend==='Growing'?C.green:trend==='Declining'?C.red:C.amber;
+  const tc2=card(s,25,538,1210,145);
+  tc2.appendChild(txt('TREND INSIGHTS',{position:'absolute',left:'18px',top:'12px',fontSize:'10px',fontWeight:'600',color:C.muted,letterSpacing:'0.07em',fontFamily:"'DM Sans',sans-serif"}));
+
+  const trendItems=[
+    {label:trend,text:'0-5 cohort: '+startProj.toLocaleString()+' (2024) → '+endProj.toLocaleString()+' (2036)',color:trendC},
+    {label:'Population',text:'Growth rate '+(g.pop_growth_rate||0).toFixed(2)+'%/yr',color:C.terra},
+    {label:'Families',text:'Avg HH size '+(g.avg_hh_size||0).toFixed(2)+' vs VIC 2.54',color:C.amber},
+    {label:'Pipeline',text:(d.pipeline_permits?.length||0)+' permit(s) — '+(d.pipeline_permits?.reduce((s,p)=>s+(p.effective_places||0),0)||0)+' effective places',color:C.blue},
+  ];
+  trendItems.forEach(({label,text,color},i)=>{
+    const x=18+i*295;
+    const badge=el('div',{position:'absolute',left:x+'px',top:'42px',padding:'3px 10px',background:color,borderRadius:'3px'});
+    badge.appendChild(txt(label,{fontSize:'9px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    tc2.appendChild(badge);
+    tc2.appendChild(txt(text,{position:'absolute',left:(x+90)+'px',top:'38px',width:'190px',fontSize:'10px',color:C.charcoal,fontFamily:"'DM Sans',sans-serif",lineHeight:'1.4'}));
+  });
+
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// SLIDE 12 — SUMMARY & RECOMMENDATION
+// ══════════════════════════════════════════════════════
+function buildSlide12(d){
+  const s=slide(C.green);
+  const r=d.ratio_funnel||{},t=d.text||{},si=d.site||{};
+
+  // Right cream panel
+  s.appendChild(el('div',{position:'absolute',left:'490px',top:'0',width:'790px',height:'720px',background:C.cream}));
+  s.appendChild(el('div',{position:'absolute',left:'490px',top:'0',width:'7px',height:'720px',background:C.greenDk}));
+  // Bottom terra bar
+  s.appendChild(el('div',{position:'absolute',left:'497px',top:'673px',width:'783px',height:'47px',background:C.terra}));
+
+  // Left panel
+  s.appendChild(txt('SUMMARY &\nRECOMMENDATION',{position:'absolute',left:'28px',top:'42px',width:'440px',fontSize:'22px',fontWeight:'600',color:C.white,lineHeight:'1.2',fontFamily:"'DM Sans',sans-serif",whiteSpace:'pre-line'}));
+  s.appendChild(txt(si.address||'',{position:'absolute',left:'28px',top:'140px',width:'440px',fontSize:'14px',color:'#C8E6D4',lineHeight:'1.3',fontFamily:"'DM Sans',sans-serif"}));
+
+  // Traffic light scores
+  const sig=r.demand_signal||'MODERATE';
+  const sigC=demandColor(sig);
+  const supC=d.ratio_funnel?.cald_suppression_level==='HIGH'?C.red:C.green;
+  const scores=[
+    {label:'Supply / Demand',score:sig,note:(r.step6_post_entry||0).toFixed(2)+'x eff · '+(r.step1_raw||0).toFixed(2)+'x raw',color:sigC},
+    {label:'Demographics',score:supC===C.red?'CAUTION':'POSITIVE',note:'Income & suppression',color:supC},
+    {label:'Competition',score:(d.competitors?.length||0)>8?'CAUTION':(d.competitors?.length||0)>5?'MODERATE':'STRONG',note:(d.competitors?.length||0)+' centres',color:(d.competitors?.length||0)>8?C.red:(d.competitors?.length||0)>5?C.amber:C.green},
+    {label:'Fee Potential',score:'POSITIVE',note:'Benchmark $188/day',color:C.green},
+    {label:'Pipeline Risk',score:(d.pipeline_permits?.length||0)>3?'HIGH':(d.pipeline_permits?.length||0)>1?'MODERATE':'LOW',note:(d.pipeline_permits?.reduce((s,p)=>s+(p.effective_places||0),0)||0)+' effective places',color:(d.pipeline_permits?.length||0)>3?C.red:(d.pipeline_permits?.length||0)>1?C.amber:C.sand},
+  ];
+  scores.forEach((sc,i)=>{
+    const y=220+i*84;
+    const sb=el('div',{position:'absolute',left:'28px',top:y+'px',width:'440px',height:'75px',background:'#274D34',borderRadius:'5px'});
+    sb.appendChild(el('div',{position:'absolute',left:'0',top:'0',width:'5px',height:'75px',background:sc.color,borderRadius:'5px 0 0 5px'}));
+    sb.appendChild(txt(sc.label,{position:'absolute',left:'16px',top:'8px',fontSize:'10px',fontWeight:'500',color:'#C8E6D4',fontFamily:"'DM Sans',sans-serif"}));
+    sb.appendChild(txt(sc.score,{position:'absolute',left:'16px',top:'32px',fontSize:'13px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    sb.appendChild(txt(sc.note,{position:'absolute',right:'12px',top:'28px',fontSize:'10px',color:'#C8E6D4',fontFamily:"'DM Sans',sans-serif"}));
+    s.appendChild(sb);
+  });
+
+  // Right panel
+  s.appendChild(txt('ANALYST RECOMMENDATION',{position:'absolute',left:'520px',top:'42px',fontSize:'11px',fontWeight:'600',color:C.terra,letterSpacing:'0.12em',fontFamily:"'DM Sans',sans-serif"}));
+  s.appendChild(el('div',{position:'absolute',left:'520px',top:'72px',width:'718px',height:'1px',background:C.border}));
+
+  const rec=[t.recommendation_para1,t.recommendation_para2,t.recommendation_para3].filter(Boolean);
+  let recY=85;
+  rec.forEach(para=>{
+    const rp=el('div',{position:'absolute',left:'520px',top:recY+'px',width:'718px',fontSize:'11px',color:C.charcoal,lineHeight:'1.5',fontFamily:"'DM Sans',sans-serif"});
+    rp.textContent=para;s.appendChild(rp);
+    recY+=70;
+  });
+  s.appendChild(el('div',{position:'absolute',left:'520px',top:'310px',width:'718px',height:'1px',background:C.border}));
+  s.appendChild(txt('NEXT STEPS TO ACTION',{position:'absolute',left:'520px',top:'322px',fontSize:'11px',fontWeight:'600',color:C.terra,letterSpacing:'0.10em',fontFamily:"'DM Sans',sans-serif"}));
+
+  const ns=t.next_steps||['Commission town planning report','Engage traffic engineer','Verify outstanding data','Commission financial model','Conduct competitor site visit','Present to Explorers Board'];
+  ns.slice(0,6).forEach((step,i)=>{
+    const y=352+i*50;
+    // Number badge
+    const nb=el('div',{position:'absolute',left:'520px',top:y+'px',width:'22px',height:'22px',background:C.terra,borderRadius:'3px',display:'flex',alignItems:'center',justifyContent:'center'});
+    nb.appendChild(txt(String(i+1),{fontSize:'10px',fontWeight:'600',color:C.white,fontFamily:"'DM Sans',sans-serif"}));
+    s.appendChild(nb);
+    s.appendChild(txt(step,{position:'absolute',left:'552px',top:y+'px',width:'686px',fontSize:'11px',color:C.charcoal,lineHeight:'1.4',fontFamily:"'DM Sans',sans-serif"}));
+    if(i<5)s.appendChild(el('div',{position:'absolute',left:'520px',top:(y+44)+'px',width:'718px',height:'1px',background:C.border}));
+  });
+
+  if(d.is_draft)draftWatermark(s);return s;
+}
+
+// ══════════════════════════════════════════════════════
+// DOWNLOAD / EXPORT
+// ══════════════════════════════════════════════════════
+function downloadHTML(){
+  if(!currentReport){alert('No report generated yet.');return;}
+  const addr=(currentReport.site?.address||'site').replace(/[^a-zA-Z0-9]/g,'_').slice(0,30);
+  // Capture current slide viewer HTML
+  const viewer=document.getElementById('slide_viewer').outerHTML;
+  const fullHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"><style>body{margin:0;background:#2C2A27;font-family:'DM Sans',sans-serif;}.slide-viewer{padding:20px;display:flex;flex-direction:column;align-items:center;gap:20px;}.slide-wrap{position:relative;width:1024px;height:576px;}.slide{position:relative;width:1280px;height:720px;overflow:hidden;font-family:'DM Sans',sans-serif;transform:scale(0.8);transform-origin:top left;}@media print{@page{size:1280px 720px;margin:0;}body{background:white;}.slide{transform:none!important;page-break-after:always;width:1280px!important;height:720px!important;}}</style></head><body>${viewer}</body></html>`;
+  const blob=new Blob([fullHTML],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='explorers_'+addr+'.html';a.click();
+}
+function notifyPPTX(){
+  const m=document.getElementById('report_msg');
+  m.textContent='PPTX export coming soon — use PDF or HTML for now.';
+  setTimeout(()=>m.textContent='',4000);
+}
+
+// ══════════════════════════════════════════════════════
+// TOGGLE LISTENER
+// ══════════════════════════════════════════════════════
+document.querySelectorAll('input[name="rs"]').forEach(r=>{
+  r.addEventListener('change',()=>{
+    document.getElementById('rs_note').textContent=r.value==='final'
+      ?'Final — no watermarks. TBC fields get footnote.'
+      :'Draft adds watermark and TBC badges';
+  });
+});
+
+// ══════════════════════════════════════════════════════
+// MYSTERY SHOPPER
+// ══════════════════════════════════════════════════════
+const FIRST_NAMES = ['Olivia','Charlotte','Mia','Amelia','Isla','Ava','Chloe','Lily','Grace','Sophie',
+  'Liam','Noah','Oliver','Jack','Henry','Lucas','Ethan','William','James','Harry',
+  'Zoe','Emma','Ella','Harper','Aria','Scarlett','Ivy','Luna','Nora','Evelyn'];
+const LAST_NAMES = ['Smith','Johnson','Williams','Brown','Jones','Taylor','Wilson','Anderson',
+  'Thomas','Jackson','White','Harris','Martin','Thompson','Garcia','Robinson','Clark','Lewis'];
+
+let msChildren = null;
+let msCalls = [];
+let msCallCtr = 0;
+
+function generateChildren() {
+  const today = new Date();
+  
+  // Child 1: random age 6-12 months
+  const months1 = Math.floor(Math.random() * 7) + 6; // 6-12
+  const dob1 = new Date(today);
+  dob1.setMonth(dob1.getMonth() - months1);
+  dob1.setDate(Math.floor(Math.random() * 28) + 1); // random day 1-28
+  const name1 = FIRST_NAMES[Math.floor(Math.random()*FIRST_NAMES.length)] + ' ' +
+                LAST_NAMES[Math.floor(Math.random()*LAST_NAMES.length)];
+
+  // Child 2: random age 3-4 years
+  const totalMonths2 = Math.floor(Math.random() * 13) + 36; // 36-48 months
+  const dob2 = new Date(today);
+  dob2.setMonth(dob2.getMonth() - totalMonths2);
+  dob2.setDate(Math.floor(Math.random() * 28) + 1); // random day 1-28
+  const name2 = FIRST_NAMES[Math.floor(Math.random()*FIRST_NAMES.length)] + ' ' +
+                LAST_NAMES[Math.floor(Math.random()*LAST_NAMES.length)];
+
+  msChildren = {
+    child1: { name: name1, dob: dob1, months: months1 },
+    child2: { name: name2, dob: dob2, months: totalMonths2 }
+  };
+
+  const fmtDob = d => d.toLocaleDateString('en-AU', {day:'2-digit',month:'2-digit',year:'numeric'});
+  const fmtAge = m => m < 12 ? m + ' months' : Math.floor(m/12) + ' yr ' + (m%12) + ' mo';
+
+  document.getElementById('ms_name1').textContent = name1;
+  document.getElementById('ms_age1').textContent = fmtAge(months1) + ' old';
+  document.getElementById('ms_dob1').textContent = 'DOB: ' + fmtDob(dob1);
+  document.getElementById('ms_name2').textContent = name2;
+  document.getElementById('ms_age2').textContent = fmtAge(totalMonths2) + ' old';
+  document.getElementById('ms_dob2').textContent = 'DOB: ' + fmtDob(dob2);
+
+  // Re-render calls to update child names
+  renderMSCalls();
+}
+
+function initMysteryShopperSection(data) {
+  // Show section
+  document.getElementById('ms_section').style.display = 'block';
+
+  // Generate children if not already done
+  if(!msChildren) generateChildren();
+
+  // Populate centre dropdown from competitors
+  const comps = data.competitors || [];
+  const sel = document.getElementById('ms_centre_sel');
+  sel.innerHTML = '<option value="">Select centre to add call...</option>';
+  comps.forEach((c, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = c.name + (c.address ? ' — ' + c.address.split(',')[0] : '');
+    sel.appendChild(o);
+  });
+
+  // Add any not-yet-added centres to tracker
+  renderMSTracker(comps);
+
+  document.getElementById('ms_section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderMSTracker(comps) {
+  const tracker = document.getElementById('ms_tracker');
+  const total = comps.length;
+  const called = msCalls.filter(c => c.status === 'complete').length;
+  document.getElementById('ms_progress_lbl').textContent = called + ' of ' + total + ' centres called';
+
+  tracker.innerHTML = comps.map((c, i) => {
+    const call = msCalls.find(mc => mc.compIdx === i);
+    const done = call?.status === 'complete';
+    return `<div class="ms-tracker-pill ${done?'done':'pending'}">${done?'✓ ':''} ${c.name.replace('Early Learning','').replace('Early Childhood','').trim().slice(0,22)}</div>`;
+  }).join('');
+}
+
+function addMSCall() {
+  const sel = document.getElementById('ms_centre_sel');
+  const idx = parseInt(sel.value);
+  if(isNaN(idx) || !currentReport) return;
+
+  // Don't add duplicate
+  if(msCalls.find(c => c.compIdx === idx)) {
+    document.querySelector('.ms-calls-list').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  const comp = currentReport.competitors[idx];
+  const id = ++msCallCtr;
+  msCalls.push({
+    id, compIdx: idx,
+    name: comp.name,
+    address: comp.address,
+    status: 'pending',
+    // Child 1 fields
+    c1_days: [],
+    c1_room_current: '',
+    c1_room_capacity: '',
+    c1_start_date: '',
+    // Child 2 fields
+    c2_days: [],
+    c2_room_current: '',
+    c2_room_capacity: '',
+    c2_start_date: '',
+    // Centre-wide
+    centre_total: '',
+    fee_quoted: '',
+    notes: '',
+  });
+  sel.value = '';
+  renderMSCalls();
+  renderMSTracker(currentReport.competitors || []);
+}
+
+function toggleDay(callId, child, day) {
+  const call = msCalls.find(c => c.id === callId);
+  if(!call) return;
+  const key = child === 1 ? 'c1_days' : 'c2_days';
+  const arr = call[key];
+  const i = arr.indexOf(day);
+  if(i === -1) arr.push(day);
+  else arr.splice(i, 1);
+  // Update button appearance
+  const btn = document.getElementById(`day_${callId}_${child}_${day}`);
+  if(btn) btn.classList.toggle('sel', arr.includes(day));
+}
+
+function updateMSField(callId, field, value) {
+  const call = msCalls.find(c => c.id === callId);
+  if(call) call[field] = value;
+}
+
+function markCallComplete(callId) {
+  const call = msCalls.find(c => c.id === callId);
+  if(!call) return;
+  call.status = 'complete';
+  renderMSCalls();
+  renderMSTracker(currentReport.competitors || []);
+  // Update competitor data in report
+  updateCompetitorFromCall(call);
+  // Rebuild the competitor slides
+  if(currentReport) buildReport(currentReport);
+}
+
+function updateCompetitorFromCall(call) {
+  if(!currentReport || !currentReport.competitors) return;
+  const comp = currentReport.competitors[call.compIdx];
+  if(!comp) return;
+
+  // Update vacancy based on available days
+  const hasVacancy = call.c1_days.length > 0 || call.c2_days.length > 0;
+  comp.vacancies = hasVacancy ? 'Yes' : 'No';
+  const fmtAge = m => m < 12 ? m + 'mo' : Math.floor(m/12) + 'yr' + (m%12>0?' '+m%12+'mo':'');
+  const age1 = msChildren?.child1 ? fmtAge(msChildren.child1.months) : 'Infant';
+  const age2 = msChildren?.child2 ? fmtAge(msChildren.child2.months) : 'Kinder';
+  comp.vacancies_detail = `${age1}: ${call.c1_days.length?call.c1_days.join(', '):'No vacancy'} · ${age2}: ${call.c2_days.length?call.c2_days.join(', '):'No vacancy'}`;
+
+  // Update fee if quoted
+  if(call.fee_quoted) comp.fee = '$' + call.fee_quoted + '/day';
+
+  // Calculate verified occupancy from call data vs ACECQA licensed places
+  if(call.centre_total && comp.places) {
+    const occ = Math.round((parseInt(call.centre_total) / parseInt(comp.places)) * 100);
+    comp.verified_occupancy_pct = occ;
+    comp.verified_occupancy_label = occ + '% (' + call.centre_total + ' of ' + comp.places + ' licensed places)';
+  }
+
+  // Room-level occupancy
+  if(call.c1_room_current && call.c1_room_capacity) {
+    const occ = Math.round((parseInt(call.c1_room_current) / parseInt(call.c1_room_capacity)) * 100);
+    comp.infant_room_occ = occ + '% (' + call.c1_room_current + '/' + call.c1_room_capacity + ')';
+  }
+  if(call.c2_room_current && call.c2_room_capacity) {
+    const occ = Math.round((parseInt(call.c2_room_current) / parseInt(call.c2_room_capacity)) * 100);
+    comp.kinder_room_occ = occ + '% (' + call.c2_room_current + '/' + call.c2_room_capacity + ')';
+  }
+
+  // Who spoke to + notes
+  if(call.notes_who) comp.ms_spoke_to = call.notes_who;
+  if(call.notes) comp.ms_notes = call.notes;
+
+  comp.ms_verified = true;
+  comp.ms_call = call;
+}
+
+function removeCall(callId) {
+  msCalls = msCalls.filter(c => c.id !== callId);
+  renderMSCalls();
+  if(currentReport) renderMSTracker(currentReport.competitors || []);
+}
+
+function renderMSCalls() {
+  const list = document.getElementById('ms_calls_list');
+  if(!msCalls.length) {
+    list.innerHTML = '<div class="empty">No calls added yet — select a centre above and click Add call</div>';
+    return;
+  }
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  const c1months = msChildren?.child1?.months || 0;
+  const c2months = msChildren?.child2?.months || 0;
+  const c1age = c1months ? (c1months < 12 ? c1months+'mo' : Math.floor(c1months/12)+'yr'+(c1months%12>0?' '+c1months%12+'mo':'')) : 'Infant';
+  const c2age = c2months ? Math.floor(c2months/12)+'yr'+(c2months%12>0?' '+c2months%12+'mo':'') : 'Kinder';
+
+  list.innerHTML = '';
+  msCalls.forEach(call => {
+    const card = document.createElement('div');
+    card.className = 'ms-call-card';
+    card.innerHTML = `
+      <div class="ms-call-hdr">
+        <div>
+          <div class="ms-call-name">${call.name}</div>
+          <div style="font-size:10px;color:var(--muted);">${call.address||''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="ms-call-status ${call.status}">${call.status === 'complete' ? 'Called' : 'Pending'}</span>
+          <button style="padding:3px 9px;background:transparent;border:1px solid var(--border);border-radius:5px;font-size:10px;cursor:pointer;" onclick="removeCall(${call.id})">Remove</button>
+        </div>
+      </div>
+      <div class="ms-call-body">
+        <div class="ms-call-grid">
+
+          <!-- Child 1 -->
+          <div class="ms-q-group">
+            <div class="ms-q-group-title">${c1age} — Infant room</div>
+            <div class="ms-q">
+              <label>Available days</label>
+              <div class="ms-days">${days.map(d => `<div class="ms-day${call.c1_days.includes(d)?' sel':''}" id="day_${call.id}_1_${d}" onclick="toggleDay(${call.id},1,'${d}')">${d}</div>`).join('')}</div>
+            </div>
+            <div class="ms-q">
+              <label>Earliest start date</label>
+              <input type="text" placeholder="e.g. Term 2 2026 or ASAP" value="${call.c1_start_date||''}" oninput="updateMSField(${call.id},'c1_start_date',this.value)">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="ms-q">
+                <label>Children in room</label>
+                <input type="number" placeholder="e.g. 14" value="${call.c1_room_current||''}" oninput="updateMSField(${call.id},'c1_room_current',this.value)">
+              </div>
+              <div class="ms-q">
+                <label>Room capacity</label>
+                <input type="number" placeholder="e.g. 18" value="${call.c1_room_capacity||''}" oninput="updateMSField(${call.id},'c1_room_capacity',this.value)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Child 2 -->
+          <div class="ms-q-group">
+            <div class="ms-q-group-title">${c2age} — Kinder room</div>
+            <div class="ms-q">
+              <label>Available days</label>
+              <div class="ms-days">${days.map(d => `<div class="ms-day${call.c2_days.includes(d)?' sel':''}" id="day_${call.id}_2_${d}" onclick="toggleDay(${call.id},2,'${d}')">${d}</div>`).join('')}</div>
+            </div>
+            <div class="ms-q">
+              <label>Earliest start date</label>
+              <input type="text" placeholder="e.g. Term 2 2026 or ASAP" value="${call.c2_start_date||''}" oninput="updateMSField(${call.id},'c2_start_date',this.value)">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="ms-q">
+                <label>Children in room</label>
+                <input type="number" placeholder="e.g. 22" value="${call.c2_room_current||''}" oninput="updateMSField(${call.id},'c2_room_current',this.value)">
+              </div>
+              <div class="ms-q">
+                <label>Room capacity</label>
+                <input type="number" placeholder="e.g. 25" value="${call.c2_room_capacity||''}" oninput="updateMSField(${call.id},'c2_room_capacity',this.value)">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Centre-wide -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div class="ms-q">
+            <label>Total children in centre</label>
+            <input type="number" placeholder="e.g. 68" value="${call.centre_total||''}" oninput="updateMSField(${call.id},'centre_total',this.value)">
+          </div>
+          <div class="ms-q">
+            <label>Fee quoted ($/day)</label>
+            <input type="number" placeholder="e.g. 163" value="${call.fee_quoted||''}" oninput="updateMSField(${call.id},'fee_quoted',this.value)">
+          </div>
+          <div class="ms-q">
+            <label>Spoke to</label>
+            <input type="text" placeholder="e.g. Centre Director" value="${call.notes_who||''}" oninput="updateMSField(${call.id},'notes_who',this.value)">
+          </div>
+        </div>
+
+        <div class="ms-q" style="margin-bottom:10px;">
+          <label>Notes</label>
+          <textarea rows="2" placeholder="Any additional observations — atmosphere, wait time, pushback on questions, mentioned competitors etc." oninput="updateMSField(${call.id},'notes',this.value)">${call.notes||''}</textarea>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="ms-update-btn" onclick="markCallComplete(${call.id})">
+            ${call.status==='complete' ? 'Update report' : 'Mark as called & update report'}
+          </button>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+
+// ══════════════════════════════════════════════════════
+// SITE DATA EXPORT / IMPORT
+// ══════════════════════════════════════════════════════
+
+async function exportSiteData() {
+  const addr = document.getElementById('address').value.trim() || 'unknown_site';
+  const status = document.getElementById('nav_status');
+  status.textContent = 'Preparing export...';
+
+  // Collect all file data as base64
+  const aerialFile = document.getElementById('faer').files[0];
+  let aerialB64 = null;
+  if(aerialFile) aerialB64 = await toBase64ForExport(aerialFile);
+
+  // Permit aerials already stored in permits[] state
+  // Comp photos already stored in compPhotos[] state
+
+  // Build export object
+  const exportData = {
+    _meta: {
+      version: '2.0',
+      exported: new Date().toISOString(),
+      address: addr,
+      form_version: 'explorers_feasibility_v2',
+    },
+
+    // ── FORM INPUTS ──────────────────────────────────
+    form: {
+      address: document.getElementById('address').value,
+      site_type: document.getElementById('site_type').value,
+      proposed_places: document.getElementById('proposed_places').value,
+      report_status: document.querySelector('input[name="rs"]:checked')?.value || 'draft',
+      lga: detectedLGA,
+      estates: selectedEstates,
+    },
+
+    // ── PERMITS (with aerials) ───────────────────────
+    permits: permits.map(p => ({
+      id: p.id,
+      address: p.address,
+      summary: p.summary,
+      places: p.places,
+      stage: p.stage,
+      discount: p.discount,
+      imgSrc: p.imgSrc || null,  // already base64 dataURL
+    })),
+
+    // ── COMPETITOR PHOTOS ────────────────────────────
+    comp_photos: compPhotos.map(c => ({
+      id: c.id,
+      name: c.name,
+      imgSrc: c.imgSrc || null,
+    })),
+
+    // ── NEARMAPS AERIAL ──────────────────────────────
+    aerial_b64: aerialB64,
+    aerial_filename: aerialFile?.name || null,
+
+    // ── LAST GENERATED REPORT DATA (GapMaps + research) ─
+    report_data: currentReport ? {
+      site: currentReport.site,
+      gapmaps_5min: currentReport.gapmaps_5min,
+      gapmaps_10min: currentReport.gapmaps_10min,
+      ratio_funnel: currentReport.ratio_funnel,
+      competitors: currentReport.competitors?.map(c => ({
+        ...c,
+        photo: null,  // photos stored separately in comp_photos
+      })),
+      competitors_10min: currentReport.competitors_10min,
+      schools: currentReport.schools,
+      retail: currentReport.retail,
+      pipeline_permits: currentReport.pipeline_permits?.map(p => ({
+        ...p,
+        imgSrc: null,  // images stored in permits[]
+      })),
+      explorers_nearest: currentReport.explorers_nearest,
+      housing_pipeline: currentReport.housing_pipeline,
+      text: currentReport.text,
+    } : null,
+
+    // ── MYSTERY SHOPPER ──────────────────────────────
+    ms_children: msChildren,
+    ms_calls: msCalls,
+  };
+
+  // Serialise and download
+  const json = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const slug = addr.replace(/[^a-zA-Z0-9]/g, '_').slice(0, 40).toLowerCase();
+  const date = new Date().toISOString().slice(0,7); // YYYY-MM
+  a.href = url;
+  a.download = `explorers_${slug}_${date}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  const sizeMB = (blob.size / (1024*1024)).toFixed(1);
+  status.textContent = `Exported ${sizeMB}MB · ${new Date().toLocaleTimeString()}`;
+  setTimeout(() => status.textContent = '', 4000);
+}
+
+async function toBase64ForExport(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result); // keep full dataURL including mime prefix
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function importSiteData(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const status = document.getElementById('nav_status');
+  status.textContent = 'Importing...';
+
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      await applyImport(data);
+      const addr = data.form?.address || data._meta?.address || 'site';
+      status.textContent = `Imported: ${addr}`;
+      setTimeout(() => status.textContent = '', 4000);
+    } catch(err) {
+      status.textContent = 'Import failed: ' + err.message;
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+  input.value = ''; // reset so same file can be re-imported
+}
+
+async function applyImport(data) {
+  const f = data.form || {};
+
+  // ── Form fields ──────────────────────────────────────
+  if(f.address) document.getElementById('address').value = f.address;
+  if(f.site_type) {
+    document.getElementById('site_type').value = f.site_type;
+    onSiteTypeChange();
+  }
+  if(f.proposed_places) document.getElementById('proposed_places').value = f.proposed_places;
+  if(f.report_status) {
+    const rs = document.querySelector(`input[name="rs"][value="${f.report_status}"]`);
+    if(rs) rs.checked = true;
+  }
+
+  // ── Estates ──────────────────────────────────────────
+  if(f.lga && f.estates?.length) {
+    detectedLGA = f.lga;
+    loadEstateDropdown(f.lga);
+    selectedEstates = f.estates;
+    renderEstates();
+    document.getElementById('estate_sec').style.display = 'block';
+    document.getElementById('lga_badge').textContent = f.lga;
+    document.getElementById('lga_bar').style.display = 'flex';
+    document.getElementById('lga_dot').className = 'sdot ok';
+    document.getElementById('lga_txt').textContent = 'LGA: ' + f.lga;
+  }
+
+  // ── Permits ──────────────────────────────────────────
+  if(data.permits?.length) {
+    permits = data.permits;
+    permitCtr = Math.max(...permits.map(p => p.id), 0);
+    renderPermits();
+  }
+
+  // ── Competitor photos ─────────────────────────────────
+  if(data.comp_photos?.length) {
+    compPhotos = data.comp_photos;
+    compCtr = Math.max(...compPhotos.map(c => c.id), 0);
+    renderCompPhotos();
+  }
+
+  // ── Aerial image ─────────────────────────────────────
+  if(data.aerial_b64) {
+    // Reconstruct a File-like display (cannot re-create actual File object
+    // but we store the b64 so generate() can use it directly)
+    window._importedAerialB64 = data.aerial_b64;
+    window._importedAerialFilename = data.aerial_filename || 'aerial.jpg';
+    // Show as uploaded in the UI
+    const box = document.getElementById('box_aerial');
+    const nameEl = document.getElementById('naer');
+    if(box) box.classList.add('has');
+    if(nameEl) nameEl.textContent = data.aerial_filename || 'aerial (imported)';
+  }
+
+  // ── Restore last report data ──────────────────────────
+  if(data.report_data) {
+    currentReport = data.report_data;
+    currentReport._meta = {
+      address: f.address || data._meta?.address,
+      isDraft: f.report_status !== 'final',
+      reportDate: data.report_data.site?.report_date || 'April 2026',
+    };
+    // Re-attach aerial
+    if(data.aerial_b64) currentReport._aerialB64 = data.aerial_b64;
+
+    // Re-attach permit images
+    if(data.permits && currentReport.pipeline_permits) {
+      data.permits.forEach((p, i) => {
+        if(p.imgSrc && currentReport.pipeline_permits[i]) {
+          currentReport.pipeline_permits[i].imgSrc = p.imgSrc;
+        }
+      });
+    }
+
+    // Re-attach competitor photos
+    if(data.comp_photos && currentReport.competitors) {
+      data.comp_photos.forEach(cp => {
+        if(cp.imgSrc && cp.name) {
+          const comp = currentReport.competitors.find(c => c.name === cp.name);
+          if(comp) comp.photo = cp.imgSrc;
+        }
+      });
+    }
+
+    // Show the report
+    document.getElementById('report_area').style.display = 'block';
+    document.getElementById('report_title').textContent =
+      (f.address || data._meta?.address || 'Site') +
+      (f.report_status !== 'final' ? ' — DRAFT' : '');
+    document.getElementById('report_msg').textContent =
+      'Restored from import · ' + (data._meta?.exported?.slice(0,10) || '');
+    buildReport(currentReport);
+    document.getElementById('report_area').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Mystery shopper ───────────────────────────────────
+  if(data.ms_children) {
+    msChildren = data.ms_children;
+    // Restore child display
+    const fmtDob = d => new Date(d).toLocaleDateString('en-AU', {day:'2-digit',month:'2-digit',year:'numeric'});
+    const fmtAge = m => m < 12 ? m + ' months' : Math.floor(m/12) + ' yr ' + (m%12) + ' mo';
+    if(msChildren.child1) {
+      document.getElementById('ms_name1').textContent = msChildren.child1.name;
+      document.getElementById('ms_age1').textContent = fmtAge(msChildren.child1.months) + ' old';
+      document.getElementById('ms_dob1').textContent = 'DOB: ' + fmtDob(msChildren.child1.dob);
+    }
+    if(msChildren.child2) {
+      document.getElementById('ms_name2').textContent = msChildren.child2.name;
+      document.getElementById('ms_age2').textContent = fmtAge(msChildren.child2.months) + ' old';
+      document.getElementById('ms_dob2').textContent = 'DOB: ' + fmtDob(msChildren.child2.dob);
+    }
+  }
+  if(data.ms_calls?.length) {
+    msCalls = data.ms_calls;
+    msCallCtr = Math.max(...msCalls.map(c => c.id), 0);
+    if(data.report_data) {
+      document.getElementById('ms_section').style.display = 'block';
+      renderMSCalls();
+      renderMSTracker(data.report_data.competitors || []);
+      // Re-populate MS centre dropdown
+      const sel = document.getElementById('ms_centre_sel');
+      sel.innerHTML = '<option value="">Select centre to add call...</option>';
+      (data.report_data.competitors || []).forEach((c, i) => {
+        const o = document.createElement('option');
+        o.value = i;
+        o.textContent = c.name + (c.address ? ' — ' + c.address.split(',')[0] : '');
+        sel.appendChild(o);
+      });
+    }
+  }
+}
+
+// Override generate() aerial handling to use imported aerial if no file selected
+const _origGenerate = generate;
+// Patch compressImage to also handle dataURL strings (from import)
+const _origCompressImage = compressImage;
+
+
+// ══════════════════════════════════════════════════════
+// TEST DATA — FULL POPULATED SHEET
+// ══════════════════════════════════════════════════════
+function loadTestData() {
+  // ── Site details ──────────────────────────────────
+  document.getElementById('address').value = '609-611 South Road, Bentleigh East VIC 3165';
+  document.getElementById('site_type').value = 'established';
+  document.getElementById('proposed_places').value = '104';
+  onSiteTypeChange();
+
+  // ── Generate children ─────────────────────────────
+  generateChildren();
+
+  // ── Build fake report data with ratio 2.0-3.0 ─────
+  const ratio = +(2.0 + Math.random()).toFixed(2);
+  const children = Math.round(ratio * 1200 + Math.random() * 200);
+  const places = 1200;
+  const centres = 6;
+  const avgHHIncome = 118000 + Math.round(Math.random()*20000);
+
+  const OPERATORS = ['Guardian','G8 Education','Goodstart','Nido','KU Children','Community Inc.','YMCA','Private'];
+  const NQS = ['Exceeding NQS','Meeting NQS','Meeting NQS','Meeting NQS','Working Towards NQS','Meeting NQS'];
+  const NQS_DATES = ['Mar 2024','Jun 2023','Dec 2022','Aug 2024','Apr 2021','Jan 2024'];
+  const STREETS = ['High Street Rd','Centre Road','South Road','Bay Street','Point Nepean Rd','Station Street','Nepean Hwy','Hampton Street'];
+  const SUBURBS = ['Bentleigh East','Bentleigh','McKinnon','Ormond','Moorabbin','Brighton East','Hampton','Cheltenham'];
+  const CENTRE_NAMES = [
+    'Bentleigh East Early Learning Centre',
+    'Guardian Childcare McKinnon',
+    'Goodstart Early Learning Ormond',
+    'Little Learners Bentleigh',
+    'KU Moorabbin Childrens Centre',
+    'Nido Early School Brighton East',
+  ];
+
+  const competitors = CENTRE_NAMES.map((name, i) => {
+    const places_c = [65,82,95,78,110,88][i];
+    const fee = (155 + Math.random() * 35).toFixed(0);
+    const vac = Math.random() > 0.4;
+    return {
+      name,
+      address: (Math.floor(Math.random()*200+1)) + ' ' + STREETS[i] + ', ' + SUBURBS[i] + ' VIC',
+      places: places_c,
+      fee: '$' + fee + '/day',
+      nqs: NQS[i],
+      nqs_date: NQS_DATES[i],
+      nqs_colour: NQS[i].includes('Exceeding') ? '3A6B4A' : NQS[i].includes('Working') ? 'B83A2A' : 'C4842A',
+      vacancies: vac ? 'Yes' : 'No',
+      hours: '6:30am-6:30pm',
+      operator: OPERATORS[i],
+      note: ['Busy corner location — high passing traffic.','Recently refurbished rooms.','Strong Exceeding NQS — quality benchmark.','Long-established community centre.','Large outdoor play space.','New build 2023 — modern fit-out.'][i],
+      photo: null,
+      ms_verified: false,
+    };
+  });
+
+  const part_factor = +(0.92 + Math.random()*0.08).toFixed(3);
+  const cald_factor = +(0.88 + Math.random()*0.10).toFixed(3);
+  const step2 = +(ratio * part_factor).toFixed(2);
+  const step3 = +(step2 * cald_factor).toFixed(2);
+  const pipeline_eff = Math.round(80 + Math.random()*60);
+  const step4 = +((children / (places + pipeline_eff + 104))).toFixed(2);
+  const step5 = step4;
+  const step6 = +(step4 * part_factor * cald_factor).toFixed(2);
+  const sig = step6 >= 3.0 ? 'STRONG' : step6 >= 2.0 ? 'MODERATE' : 'CAUTION';
+
+  currentReport = {
+    _meta: { address: '609-611 South Road, Bentleigh East VIC 3165', isDraft: true, reportDate: 'April 2026' },
+    _aerialB64: null,
+    is_draft: true,
+    site: {
+      address: '609-611 South Road, Bentleigh East VIC 3165',
+      lga: 'Glen Eira CC',
+      proposed_places: 104,
+      site_type: 'established',
+      report_date: 'April 2026',
+      aerial_date: 'Feb 2026',
+    },
+    gapmaps_5min: {
+      population_2024: 37500 + Math.round(Math.random()*2000),
+      children_0_5: children,
+      ldc_places: places,
+      ldc_centres: centres,
+      ratio: +ratio,
+      avg_hh_income: avgHHIncome,
+      avg_income_capita: 58000 + Math.round(Math.random()*8000),
+      seifa: +(7.8 + Math.random()*0.8).toFixed(2),
+      aus_born_pct: +(62 + Math.random()*8).toFixed(1),
+      sc_asia_pct: +(4 + Math.random()*4).toFixed(1),
+      se_asia_pct: +(3 + Math.random()*3).toFixed(1),
+      ne_asia_pct: +(2 + Math.random()*2).toFixed(1),
+      uk_ireland_pct: +(5 + Math.random()*3).toFixed(1),
+      fee_24_35mo: +(160 + Math.random()*15).toFixed(2),
+      pop_growth_rate: +(1.1 + Math.random()*0.6).toFixed(2),
+      avg_mortgage_mth: 2400 + Math.round(Math.random()*400),
+      avg_weekly_rent: 420 + Math.round(Math.random()*60),
+      avg_hh_size: +(2.6 + Math.random()*0.4).toFixed(2),
+      motor_vehicles_hh: +(1.7 + Math.random()*0.3).toFixed(2),
+      own_pct: +(35 + Math.random()*15).toFixed(1),
+      mortgage_pct: +(38 + Math.random()*10).toFixed(1),
+      rent_pct: +(15 + Math.random()*8).toFixed(1),
+      workers_per_place: +(13 + Math.random()*3).toFixed(2),
+      projections_0_5: Array.from({length:13}, (_,i) => Math.round(children * (1 + i*0.012 + (Math.random()-0.5)*0.005))),
+    },
+    gapmaps_10min: {
+      children_0_5: children * 5 + Math.round(Math.random()*1000),
+      ldc_places: places * 5 + Math.round(Math.random()*500),
+      ldc_centres: centres * 4 + Math.round(Math.random()*5),
+      ratio: +(ratio * 0.95).toFixed(2),
+      fee_24_35mo: +(159 + Math.random()*12).toFixed(2),
+      workers_per_place: +(14 + Math.random()*2).toFixed(2),
+      aus_born_pct: +(60 + Math.random()*8).toFixed(1),
+      sc_asia_pct: +(5 + Math.random()*4).toFixed(1),
+      se_asia_pct: +(4 + Math.random()*3).toFixed(1),
+      ne_asia_pct: +(3 + Math.random()*2).toFixed(1),
+      uk_ireland_pct: +(4 + Math.random()*3).toFixed(1),
+    },
+    ratio_funnel: {
+      step1_raw: ratio,
+      step2_participation: step2,
+      step3_cald: step3,
+      step4_pipeline_childcare: step4,
+      step5_housing_or_same: step5,
+      step6_post_entry: step6,
+      participation_factor: part_factor,
+      cald_factor: cald_factor,
+      cald_suppression_level: cald_factor < 0.92 ? 'MODERATE' : 'LOW',
+      demand_signal: sig,
+      demand_colour: sig==='STRONG'?'green':sig==='MODERATE'?'amber':'red',
+    },
+    competitors,
+    competitors_10min: competitors.slice(0,3).map(c => ({...c, distance: (0.8+Math.random()*4).toFixed(1)+'km'})),
+    schools: [
+      {name:'McKinnon Secondary College',distance:'0.2km',type:'7-12',sector:'Government',enrolments:'~1,850'},
+      {name:'Bentleigh East Primary School',distance:'0.4km',type:'Prep-6',sector:'Government',enrolments:'~620'},
+      {name:"St Peter's Primary (Bentleigh)",distance:'0.5km',type:'Prep-6',sector:'Catholic',enrolments:'~410'},
+      {name:'Ormond Primary School',distance:'1.1km',type:'Prep-6',sector:'Government',enrolments:'~540'},
+      {name:'Bentleigh Secondary College',distance:'1.4km',type:'7-12',sector:'Government',enrolments:'~980'},
+    ],
+    retail: [
+      {name:'Bentleigh Central (Centre Road)',distance:'0.8km',anchors:'Coles, specialty retail, cafes',note:'High foot traffic commuter strip'},
+      {name:'Cabrini Hospital Malvern',distance:'3.5km',anchors:'Major private hospital',note:'Large healthcare workforce catchment'},
+      {name:'Westfield Southland',distance:'4.5km',anchors:'Myer, Coles, Kmart, food court',note:'Major regional draw on South Road corridor'},
+      {name:'South Road Village Strip',distance:'0.1km',anchors:'Cafes, specialty food, services',note:'Adjacent to site — morning drop-off convenience'},
+    ],
+    pipeline_permits: [
+      {address:'84 Centre Road, Bentleigh VIC 3204',summary:'96-place LDC. DA lodged Sep 2024. Private developer. No construction commenced.',approved_places:96,stage:'DA Lodged',stage_colour:'378ADD',risk_discount_pct:75,effective_places:24,imgSrc:null},
+    ],
+    explorers_nearest: [
+      {name:'Nunawading',address:'86-88 Springvale Rd, Nunawading VIC 3131',places:154,fee:184,occ_pct:53,drive_min:22,distance_km:17.4,route:'South Rd → EastLink → Springvale Rd'},
+      {name:'Surrey Hills (Elgar)',address:'221 Elgar Rd, Surrey Hills VIC 3127',places:132,fee:181,occ_pct:54,drive_min:24,distance_km:12.8,route:'South Rd → Nepean Hwy → Dandenong Rd → Elgar Rd'},
+      {name:'Ashwood',address:'205 High Street Rd, Ashwood VIC 3147',places:130,fee:184,occ_pct:91,drive_min:18,distance_km:9.2,route:'South Rd → North Rd → High Street Rd'},
+    ],
+    housing_pipeline: {applies:false},
+    text: {
+      key_observations: [
+        'Demand signal MODERATE at '+step6+'x effective ratio — below VIC benchmark 2.42x. Established market with room for a quality operator.',
+        'CALD suppression LOW — predominantly Australian-born catchment with strong fee-paying propensity.',
+        'Highly affluent catchment (SEIFA 8.4) with above-average household income. Dual-income professional families the dominant demographic.',
+        'South Road arterial frontage provides excellent brand visibility and commuter pass-through enrolment potential.',
+        'McKinnon Secondary School adjacent — one of Melbournes most sought-after government schools, attracting high-SEIFA professional families.',
+      ],
+      school_insight: 'McKinnon Secondary College catchment families are the core Explorers demographic — high-income dual-income professionals with strong childcare participation propensity. Density of primary schools within 500m creates strong sibling enrolment pipeline.',
+      market_signal: 'Competitive but quality-differentiated market. Three Meeting NQS centres and one Exceeding NQS. Explorers Reggio Emilia positioning would be genuinely differentiated. Fee ceiling ~$188-195/day based on Brighton East comparable.',
+      recommendation_para1: 'The 5-min catchment presents a MODERATE demand signal at '+step6+'x effective ratio, sitting below the VIC benchmark of 2.42x. However the raw ratio of '+ratio+'x and the highly affluent demographic profile (SEIFA 8.4, avg HH income $'+Math.round(avgHHIncome/1000)+'k) indicate a fee-tolerant market where quality differentiation drives occupancy rather than price competition.',
+      recommendation_para2: 'Quality gap analysis: of the 6 competitors in the 5-min catchment, five are Meeting NQS — no Exceeding NQS centre operates on the immediate South Road corridor. Explorers Reggio Emilia curriculum, in-house chef model and Exceeding NQS track record represent a meaningful quality gap that should support premium fee positioning at $175-188/day.',
+      recommendation_para3: 'Key risks: the 1.23% population growth rate is below Melbourne average, limiting organic demand growth. A DA Lodged permit at 84 Centre Road (96 places, 75% discounted to 24 effective) represents a low-probability pipeline risk. Site traffic and parking should be verified — South Road arterial access requires a traffic management plan for the DA.',
+      next_steps: [
+        'Commission a town planning report confirming C1Z zoning controls, overlay restrictions and DA pathway for 609-611 South Road.',
+        'Engage a traffic engineer to confirm TIA requirements and car parking adequacy for a 104-place centre on South Road.',
+        'Verify all outstanding competitor fees and NQS dates via StartingBlocks mystery shopper calls.',
+        'Commission a detailed financial model covering revenue ramp, staffing ratios, capex and payback period for a 104-place centre.',
+        'Conduct competitor site visits — focus on quality gap assessment relative to Explorers Reggio Emilia positioning.',
+        'Present full feasibility package to the Explorers Board with go/no-go recommendation.',
+      ],
+    },
+  };
+
+  // ── Build report slides ───────────────────────────
+  document.getElementById('report_area').style.display = 'block';
+  document.getElementById('report_title').textContent = '609-611 South Road, Bentleigh East — TEST DATA';
+  document.getElementById('report_msg').textContent = 'Randomly generated · ratio ' + ratio + 'x';
+  buildReport(currentReport);
+
+  // ── Populate mystery shopper calls ────────────────
+  initMysteryShopperSection(currentReport);
+
+  // Add calls for all 6 centres and mark them complete with random data
+  const DAY_OPTIONS = ['Mon','Tue','Wed','Thu','Fri'];
+
+  competitors.forEach((comp, idx) => {
+    const id = ++msCallCtr;
+    const c1Days = DAY_OPTIONS.filter(() => Math.random() > 0.5);
+    const c2Days = DAY_OPTIONS.filter(() => Math.random() > 0.5);
+    const c1RoomCurr = Math.round(8 + Math.random()*10);
+    const c1RoomCap = Math.round(c1RoomCurr + Math.random()*6 + 1);
+    const c2RoomCurr = Math.round(15 + Math.random()*12);
+    const c2RoomCap = Math.round(c2RoomCurr + Math.random()*6 + 1);
+    const centreCurr = Math.round(comp.places * (0.6 + Math.random()*0.3));
+    const feeNum = parseInt(comp.fee?.replace(/[^0-9]/g,''))||168;
+    const spokeToOptions = ['Centre Director','Enrolments Officer','Receptionist','Room Leader','Centre Manager'];
+
+    const call = {
+      id,
+      compIdx: idx,
+      name: comp.name,
+      address: comp.address,
+      status: 'complete',
+      c1_days: c1Days,
+      c1_room_current: String(c1RoomCurr),
+      c1_room_capacity: String(c1RoomCap),
+      c1_start_date: Math.random()>0.5 ? 'ASAP' : 'Term ' + Math.ceil(Math.random()*4) + ' 2026',
+      c2_days: c2Days,
+      c2_room_current: String(c2RoomCurr),
+      c2_room_capacity: String(c2RoomCap),
+      c2_start_date: Math.random()>0.5 ? 'ASAP' : 'Term ' + Math.ceil(Math.random()*4) + ' 2026',
+      centre_total: String(centreCurr),
+      fee_quoted: String(feeNum),
+      notes_who: spokeToOptions[Math.floor(Math.random()*spokeToOptions.length)],
+      notes: [
+        'Very friendly, mentioned they have a waitlist for full-time but casual days available.',
+        'Hesitant to give room numbers — eventually confirmed after second ask.',
+        'Mentioned centre recently had staff changes, new director started in Feb.',
+        'Happy to discuss — confirmed strong occupancy in infant room.',
+        'Mentioned they are planning a renovation mid-year, some disruption expected.',
+        'Quick call — confirmed availability, offered a tour next week.',
+      ][idx] || '',
+    };
+    msCalls.push(call);
+    updateCompetitorFromCall(call);
+  });
+
+  // Re-render mystery shopper UI
+  renderMSCalls();
+  renderMSTracker(competitors);
+
+  // Rebuild slides to reflect verified call data
+  buildReport(currentReport);
+
+  setTimeout(() => {
+    document.getElementById('report_area').scrollIntoView({behavior:'smooth'});
+  }, 100);
+  document.getElementById('nav_status').textContent = 'Test data loaded · ratio ' + ratio + 'x';
+}
+
+
+// ══════════════════════════════════════════════════════
+// GAPMAPS CSV PARSER
+// ══════════════════════════════════════════════════════
+
+// Parsed CSV data stored here — injected into Claude prompt
+let parsedCSV5 = null;
+let parsedCSV10 = null;
+
+function handleCSV(inputId, boxId, nameId, catchment) {
+  const input = document.getElementById(inputId);
+  const file = input.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = parseGapMapsCSV(e.target.result);
+      if(catchment === '5min') parsedCSV5 = data;
+      else parsedCSV10 = data;
+
+      // Update UI
+      const box = document.getElementById(boxId);
+      box.classList.add('has');
+      box.style.borderColor = '#3A6B4A';
+      box.style.background = '#E4EFE8';
+      document.getElementById(nameId).textContent = file.name + ' ✓ parsed';
+
+      console.log('Parsed GapMaps CSV (' + catchment + '):', data);
+    } catch(err) {
+      alert('CSV parse error: ' + err.message);
+      console.error(err);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function parseGapMapsCSV(raw) {
+  // Robust parser written against actual GapMaps CSV format (April 2026)
+  // CSV has columns: Label, Location, Victoria, Australia
+  // All values are raw numbers (not percentages) unless noted
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
+  const d = {};
+  let section = '';
+
+  // Parse a CSV line properly — handles quoted fields
+  const parseLine = (line) => {
+    const result = [];
+    let cur = '', inQ = false;
+    for(let i = 0; i < line.length; i++){
+      const c = line[i];
+      if(c === '"'){ inQ = !inQ; continue; }
+      if(c === ',' && !inQ){ result.push(cur.trim()); cur = ''; continue; }
+      cur += c;
+    }
+    result.push(cur.trim());
+    return result;
+  };
+
+  // Get numeric value from col 1 (Location column)
+  const locVal = (line) => {
+    const parts = parseLine(line);
+    const v = parts[1];
+    if(!v) return null;
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  };
+
+  // Get label (col 0, stripped of quotes)
+  const label = (line) => parseLine(line)[0].replace(/"/g,'').trim();
+
+  for(let i = 0; i < lines.length; i++){
+    const line = lines[i];
+    const lbl = label(line);
+
+    // ── Section detection (match real CSV headers) ──
+    if(lbl === 'Population')                          { section = 'population'; continue; }
+    if(lbl === 'Workers 2021')                        { section = 'workers'; continue; }
+    if(lbl === 'Age 2021')                            { section = 'age'; continue; }
+    if(lbl === 'Households 2021')                     { section = 'households'; continue; }
+    if(lbl === 'Income & Affluence 2021')             { section = 'income'; continue; }
+    if(lbl === 'Birthplace 2021')                     { section = 'birthplace'; continue; }
+    if(lbl === 'Housing 2021')                        { section = 'housing'; continue; }
+    if(lbl === 'Motor Vehicles 2021')                 { section = 'vehicles'; continue; }
+    if(lbl === 'Child Care Supply and Demand')        { section = 'childcare'; continue; }
+    if(lbl === 'Supply and Demand')                   { section = 'childcare_sd'; continue; }
+    if(lbl === 'Fees')                                { section = 'fees'; continue; }
+    if(lbl.startsWith('Age Projection: 0 to 5'))      { section = 'age_proj_0_5'; continue; }
+    if(lbl === 'Population Projections' || lbl.startsWith('Population Projections,')) { section = 'pop_proj'; continue; }
+    // Stop processing non-essential sections to avoid misreads
+    if(lbl.startsWith('Household Spending'))          { section = 'ignore'; continue; }
+    if(lbl.startsWith('2021 Age Profile'))            { section = 'ignore'; continue; }
+    if(lbl.startsWith('2021 Population'))             { section = 'ignore'; continue; }
+    if(lbl.startsWith('2021 Workers'))                { section = 'ignore'; continue; }
+    if(lbl.startsWith('2021 SEIFA'))                  { section = 'ignore'; continue; }
+    if(lbl.startsWith('2021 Aboriginal'))             { section = 'ignore'; continue; }
+    if(lbl.startsWith('2021 Occupation'))             { section = 'ignore'; continue; }
+    if(lbl.startsWith('2029 Age Projection'))         { section = 'ignore'; continue; }
+    if(lbl.startsWith('2034 Age Projection'))         { section = 'ignore'; continue; }
+    if(lbl === 'Total Spend (AUD Mil)')               { section = 'ignore'; continue; }
+    if(lbl === 'Spend Per Capita (AUD)')              { section = 'ignore'; continue; }
+
+    if(section === 'ignore') continue;
+
+    const v = locVal(line);
+
+    // ── Population ───────────────────────────────────
+    if(section === 'population'){
+      if(lbl === '2024')                              d.population_2024 = Math.round(v);
+      if(lbl === '2025')                              d.population_2025 = Math.round(v);
+      if(lbl.includes('Growth Rate'))                 d.pop_growth_rate = +v.toFixed(2);
+    }
+
+    // ── Workers ──────────────────────────────────────
+    if(section === 'workers'){
+      if(lbl === 'Workers')                           d.workers = Math.round(v);
+    }
+
+    // ── Age ──────────────────────────────────────────
+    if(section === 'age'){
+      // Values are percentages (e.g. 10.04 = 10.04%)
+      if(lbl === '0 to 4')                            d.age_0_4_pct = +v.toFixed(2);
+      if(lbl.startsWith('Average age'))               d.avg_age = +v.toFixed(1);
+    }
+
+    // ── Households ───────────────────────────────────
+    if(section === 'households'){
+      if(lbl.startsWith('Average Household Size'))    d.avg_hh_size = +v.toFixed(2);
+      if(lbl.startsWith('No. of Occupied'))           d.occupied_dwellings = Math.round(v);
+    }
+
+    // ── Income & Affluence ───────────────────────────
+    if(section === 'income'){
+      if(lbl.startsWith('Average Annual Income Per Capita'))     d.avg_income_capita = Math.round(v);
+      if(lbl.startsWith('Average Annual Income Per Household'))  d.avg_hh_income = Math.round(v);
+      // SEIFA is a decile score (1-10 scale) — NOT the year 2021
+      if(lbl.startsWith('SEIFA Index'))                          d.seifa = +v.toFixed(2);
+    }
+
+    // ── Birthplace ───────────────────────────────────
+    // Values are percentages (e.g. 61.3 = 61.3%)
+    if(section === 'birthplace'){
+      if(lbl === 'Australia')                         d.aus_born_pct = +v.toFixed(2);
+      if(lbl === 'UK')                                d.uk_ireland_pct = +v.toFixed(2);
+      if(lbl.startsWith('South and Central Asia'))    d.sc_asia_pct = +v.toFixed(2);
+      if(lbl.startsWith('South East Asia'))           d.se_asia_pct = +v.toFixed(2);
+      if(lbl.startsWith('North East Asia'))           d.ne_asia_pct = +v.toFixed(2);
+    }
+
+    // ── Housing ──────────────────────────────────────
+    // Tenure values are percentages; mortgage/rent are dollar amounts
+    if(section === 'housing'){
+      if(lbl === 'Owned')                             d.own_pct = +v.toFixed(2);
+      if(lbl === 'Mortgage')                          d.mortgage_pct = +v.toFixed(2);
+      if(lbl === 'Renting')                           d.rent_pct = +v.toFixed(2);
+      if(lbl.startsWith('Average monthly mortgage'))  d.avg_mortgage_mth = Math.round(v);
+      if(lbl.startsWith('Average Weekly rental'))     d.avg_weekly_rent = Math.round(v);
+    }
+
+    // ── Motor Vehicles ───────────────────────────────
+    if(section === 'vehicles'){
+      if(lbl.startsWith('Average No. of motor'))      d.motor_vehicles_hh = +v.toFixed(2);
+    }
+
+    // ── Childcare Supply & Demand ─────────────────────
+    if(section === 'childcare_sd'){
+      // "Long Day Care - Facilities" — this is centre COUNT
+      if(lbl.startsWith('Long Day Care - Facilities'))  d.ldc_centres = Math.round(v);
+      // "Long Day Care - Places" — this is licensed PLACES
+      if(lbl.startsWith('Long Day Care - Places'))      d.ldc_places = Math.round(v);
+      // Children counts
+      if(lbl.startsWith('0-4 year'))                    d.children_0_4 = Math.round(v);
+      if(lbl.startsWith('0-5 year'))                    d.children_0_5 = Math.round(v);
+      // Ratio is already calculated as 0-5 / places
+      if(lbl.startsWith('Ratio'))                       d.ratio = +v.toFixed(4);
+      // Workers per place
+      if(lbl.startsWith('Workers') && lbl.includes('Places')) d.workers_per_place = +v.toFixed(3);
+    }
+
+    // ── Fees ─────────────────────────────────────────
+    if(section === 'fees'){
+      if(lbl.startsWith('Number of LDCs'))            d.ldc_fee_count = Math.round(v);
+      if(lbl.startsWith('0-12'))                      d.fee_0_12mo = +v.toFixed(2);
+      if(lbl.startsWith('13-24'))                     d.fee_13_24mo = +v.toFixed(2);
+      if(lbl.startsWith('24-35'))                     d.fee_24_35mo = +v.toFixed(2);
+      if(lbl.startsWith('36+'))                       d.fee_36plus = +v.toFixed(2);
+    }
+
+    // ── Age Projection 0-5 ───────────────────────────
+    if(section === 'age_proj_0_5'){
+      if(!d.projections_0_5) d.projections_0_5 = [];
+      // Lines are: 2024,4902,... — label is the year
+      if(/^20\d\d$/.test(lbl) && v !== null) d.projections_0_5.push(Math.round(v));
+    }
+  }
+
+  return d;
+}
+
+function getCSVDataForPrompt() {
+  // Returns a text block summarising parsed CSV data for injection into the Claude prompt
+  if(!parsedCSV5 && !parsedCSV10) return '';
+
+  const fmt = (d, label) => {
+    if(!d) return label + ': not provided';
+    return `${label}:
+  Population (2024): ${d.population_2024 || 'TBC'}
+  Children 0-5 (2024): ${d.children_0_5 || 'TBC'}
+  LDC Centres: ${d.ldc_centres || 'TBC'}
+  LDC Places: ${d.ldc_places || 'TBC'}
+  Raw Ratio (0-5 / places): ${d.ratio ? d.ratio.toFixed(3) : 'TBC'}
+  Workers per place: ${d.workers_per_place || 'TBC'}
+  Pop growth rate 2019-2024: ${d.pop_growth_rate || 'TBC'}%
+  Avg HH income: $${d.avg_hh_income || 'TBC'}
+  Avg income per capita: $${d.avg_income_capita || 'TBC'}
+  SEIFA: ${d.seifa || 'TBC'}
+  Australia born: ${d.aus_born_pct || 'TBC'}%
+  SC Asia: ${d.sc_asia_pct || 'TBC'}%
+  SE Asia: ${d.se_asia_pct || 'TBC'}%
+  NE Asia: ${d.ne_asia_pct || 'TBC'}%
+  UK/Ireland: ${d.uk_ireland_pct || 'TBC'}%
+  Owned: ${d.own_pct || 'TBC'}%  Mortgage: ${d.mortgage_pct || 'TBC'}%  Renting: ${d.rent_pct || 'TBC'}%
+  Avg monthly mortgage: $${d.avg_mortgage_mth || 'TBC'}
+  Avg weekly rent: $${d.avg_weekly_rent || 'TBC'}
+  Avg HH size: ${d.avg_hh_size || 'TBC'}
+  Motor vehicles/HH: ${d.motor_vehicles_hh || 'TBC'}
+  Fee 0-12mo: $${d.fee_0_12mo || 'TBC'}  Fee 24-35mo: $${d.fee_24_35mo || 'TBC'}  Fee 36+mo: $${d.fee_36plus || 'TBC'}
+  0-5 projections (2024-2036): ${d.projections_0_5 ? d.projections_0_5.join(', ') : 'TBC'}`;
+  };
+
+  return `
+PRE-PARSED GAPMAPS CSV DATA — USE THESE VALUES DIRECTLY, DO NOT RE-EXTRACT FROM PDF:
+${fmt(parsedCSV5, '5-MINUTE CATCHMENT')}
+
+${fmt(parsedCSV10, '10-MINUTE CATCHMENT')}
+
+IMPORTANT: The above values are already extracted. Use them directly to populate the gapmaps_5min and gapmaps_10min fields in the JSON. Do not attempt to re-read them from any attached PDF.`;
+}
+
+</script>
+</body>
+</html>
